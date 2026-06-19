@@ -3,7 +3,8 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 
-const CERTS_DIR = "C:/Users/aguil/Downloads/proyecto_fer/Certificados";
+// Usar ruta relativa dentro del proyecto para ser portable en servidores
+const CERTS_DIR = path.join(process.cwd(), 'Certificados');
 const LOGO_PATH = path.resolve("assets/logo.png");
 
 export const generarCertificado = async (req, res) => {
