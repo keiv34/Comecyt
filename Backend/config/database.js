@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Determinar la URL de conexión
-const connectionString = process.env.DATABASE_URL || "postgresql://agora_comecyt_user:5URTzhfPOCVRfzOjVwJlqRHXbfqsQ7Iq@dpg-d8o67136sc1c73bb6ps0-a/agora_comecyt";
+const connectionString = process.env.DATABASE_URL;
 
 // Configuración del pool de PostgreSQL
 const poolConfig = {
