@@ -55,8 +55,12 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Servir archivos estáticos
 app.use('/avatars', express.static('public/avatars'));
-// ✅ AGREGADO: Carpeta pública para PDFs de certificados
-app.use('/Certificados', express.static('Certificados'));
+// ✅ Carpeta pública para PDFs de certificados
+const CERTS_DIR = path.join(process.cwd(), 'Certificados');
+if (!fs.existsSync(CERTS_DIR)) {
+  fs.mkdirSync(CERTS_DIR, { recursive: true });
+}
+app.use('/certificados', express.static(CERTS_DIR));
 
 // ===== CONFIGURACIÓN MULTER PARA AVATARS =====
 const storage = multer.diskStorage({
@@ -555,9 +559,6 @@ app.use("/api/docente", docenteRoutes);
 app.use("/api/admin", adminRoutes);
 // ✅ AGREGADO: Ruta de certificados
 app.use("/api/certificados", certificadosRoutes);
-
-const CERTS_DIR = "C:/Users/aguil/Downloads/proyecto_fer/Certificados";
-app.use("/certificados", express.static(CERTS_DIR));
 
 // ===== LISTAR TODAS LAS RUTAS REGISTRADAS - VERSIÓN SEGURA =====
 function printRoutes() {

@@ -94,7 +94,7 @@ router.post("/generar", async (req, res) => {
 
         res.json({
             success: true,
-            archivo: `/Certificados/${nombreArchivo}`,
+            archivo: `/certificados/${nombreArchivo}`,
             mensaje: "Certificado generado correctamente"
         });
 
@@ -111,7 +111,7 @@ router.get("/alumno/:alumno_id", (req, res) => {
             .filter(file => file.endsWith('.pdf'))
             .map(file => ({
                 nombre: file,
-                url: `/Certificados/${file}`
+                url: `/certificados/${file}`
             }));
 
         res.json({ certificados: archivos });

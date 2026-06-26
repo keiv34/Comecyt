@@ -3,8 +3,11 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 
-const CERTS_DIR = "C:/Users/aguil/Downloads/proyecto_fer/Certificados";
-const LOGO_PATH = path.resolve("assets/logo.png");
+const CERTS_DIR = path.join(process.cwd(), "Certificados");
+const LOGO_PATH = path.resolve(process.cwd(), "assets", "logo.png");
+if (!fs.existsSync(CERTS_DIR)) {
+  fs.mkdirSync(CERTS_DIR, { recursive: true });
+}
 
 export const generarCertificado = async (req, res) => {
   try {
