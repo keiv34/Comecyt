@@ -15,15 +15,21 @@ const poolConfig = {
 };
 
 // Render PostgreSQL requiere SSL para conexiones externas (como desarrollo local)
+// Determinar la URL de conexión (usa la del .env o la predeterminada de Render)
+const connectionString = process.env.DATABASE_URL || "postgresql://agora_comecyt_user:5URTzhfPOCVRfzOjVwJlqRHXbfqsQ7Iq@dpg-d8o67136sc1c73bb6ps0-a/agora_comecyt";
+
+// Configuración del pool de PostgreSQL (SOLO DEBE HABER UNO)
 const poolConfig = {
   connectionString,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
   ssl: {
-    rejectUnauthorized: false // <--- Agregado directamente aquí
+    rejectUnauthorized: false
   }
-}
+};
+
+const pgPool = new pg.Pool(poolConfig);
 
 const pgPool = new pg.Pool(poolConfig);
 
