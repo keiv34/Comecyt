@@ -33,6 +33,7 @@ const openai = new OpenAI({
 
 // ⚡ Configuración CORS - ACEPTA CUALQUIER LOCALHOST:* AUTOMÁTICAMENTE
 const allowedOrigins = [
+  "https://comecyt.vercel.app",
   "https://comecyt-wb2i.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
