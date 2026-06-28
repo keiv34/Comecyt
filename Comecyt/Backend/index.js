@@ -9,7 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import jwt from "jsonwebtoken";
 
-// ✅ RUTAS - CORREGIDOS LOS NOMBRES
+// ✅ RUTAS - CORREGIDOS LOS NOMBRES chan no jala
 import authRoutes from "./routes/authRoutes.js";
 import alumnoRoutes from "./routes/alumnoRoutes.js";
 import modulosRoutes from "./routes/modulosRoutes.js";
