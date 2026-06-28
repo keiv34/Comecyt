@@ -42,23 +42,30 @@ const allowedOrigins = [
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) return callback(null, true);
 
-      if (
+    console.log("=================================");
+    console.log("Origin recibido:", origin);
+    console.log("Allowed:", allowedOrigins);
+    console.log("=================================");
+
+    if (!origin) return callback(null, true);
+
+    if (
         origin.startsWith("http://localhost:") ||
         origin.startsWith("http://127.0.0.1:")
-      ) {
+    ) {
         return callback(null, true);
-      }
+    }
 
-      if (allowedOrigins.includes(origin)) {
-        console.log("✅ CORS permitido:", origin);
+    if (allowedOrigins.includes(origin)) {
+        console.log("✅ PERMITIDO");
         return callback(null, true);
-      }
+    }
 
-      console.log("❌ CORS bloqueado:", origin);
-      return callback(new Error("No permitido por CORS"));
-    },
+    console.log("❌ BLOQUEADO");
+
+    return callback(new Error("No permitido por CORS"));
+},
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
