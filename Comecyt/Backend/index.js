@@ -31,22 +31,36 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+const allowedOrigins = [
+  "https://comecyt-wb2i.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
 // ⚡ Configuración CORS - ACEPTA CUALQUIER LOCALHOST:* AUTOMÁTICAMENTE
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin(origin, callback) {
       if (!origin) return callback(null, true);
-      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-        console.log(`✅ CORS: Permitido ${origin}`);
+
+      if (
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:")
+      ) {
         return callback(null, true);
       }
-      console.log(`❌ CORS: Bloqueado ${origin}`);
-      callback(new Error('No permitido por CORS'));
+
+      if (allowedOrigins.includes(origin)) {
+        console.log("✅ CORS permitido:", origin);
+        return callback(null, true);
+      }
+
+      console.log("❌ CORS bloqueado:", origin);
+      return callback(new Error("No permitido por CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    exposedHeaders: ["Content-Length", "X-Total-Count"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
