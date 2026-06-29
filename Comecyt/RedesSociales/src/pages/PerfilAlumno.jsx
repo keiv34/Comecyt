@@ -6,7 +6,7 @@ import ProfileCard from "../Components/common/ProfileCard";
 import { Camera, LogOut, FileText, Download, Eye, ShieldCheck, User } from "lucide-react";
 import "../Css/PerfilAlumno.css";
 
-const API_URL = 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PerfilAlumno() {
   const navigate = useNavigate();
