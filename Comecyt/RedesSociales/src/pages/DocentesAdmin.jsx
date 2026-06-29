@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Css/DocentesAdmin.css";
 
+//se le agrego la url
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function DocentesAdmin() {
   const [docentes, setDocentes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +49,7 @@ export default function DocentesAdmin() {
   const cargarDocentes = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/docentes"
+        `${API_URL}/api/admin/docentes`
       );
       setDocentes(data || []);
       setError("");
@@ -90,7 +93,7 @@ export default function DocentesAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/docentes/${editing}`,
+        `${API_URL}/api/admin/docentes/${editing}`,
         form
       );
 
@@ -119,7 +122,7 @@ export default function DocentesAdmin() {
     if (!confirmDelete) return;
     try {
       await axios.delete(
-        `http://localhost:4000/api/admin/docentes/${confirmDelete.docente_id}`
+        `${API_URL}/api/admin/docentes/${confirmDelete.docente_id}`
       );
 
       setDocentes((prev) =>
@@ -160,8 +163,8 @@ export default function DocentesAdmin() {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/admin/docentes", {
-        nombre: createForm.nombre,
+      await axios.post(`${API_URL}/api/admin/docentes`, {
+      nombre: createForm.nombre,
         apellido: createForm.apellido,
         correo: createForm.correo,
         contraseña: createForm.password,
