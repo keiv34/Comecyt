@@ -4,7 +4,8 @@ import { Outlet, Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "../Css/DashboardLayout.css";
 
-const API_URL = 'http://localhost:4000';
+//const API_URL = 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function DashboardLayout() {
   const navigate = useNavigate();
