@@ -15,28 +15,18 @@ console.log("PGSSLMODE:", process.env.PGSSLMODE);
 console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log("================================");
 // Configuración del pool de PostgreSQL
-const poolConfig = {
-  connectionString,
+const pgPool = new pg.Pool({
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT),
+  database: process.env.PGDATABASE,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
-};
-
-
-// Usar SSL en entornos externos como Railway o Render
-const isProduction = process.env.NODE_ENV === "production";
-const needsSsl = isProduction || connectionString.includes(".render.com") || connectionString.includes(".railway.internal");
-
-if (needsSsl) {
-  poolConfig.ssl = {
+  ssl: {
     rejectUnauthorized: false
-  };
-}
-
-const pgPool = new pg.Pool(poolConfig);
-
-pgPool.on('error', (err) => {
-  console.error('❌ [PG-DB] Error inesperado en el pool:', err);
+  }
 });
 
 
