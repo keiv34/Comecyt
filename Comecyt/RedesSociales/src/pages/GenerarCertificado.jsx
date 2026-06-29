@@ -2,6 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+//se le agrego
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 export default function GenerarCertificado() {
   const navigate = useNavigate();
   const [mostrarAgradecimiento, setMostrarAgradecimiento] = useState(false);
@@ -22,7 +25,7 @@ export default function GenerarCertificado() {
         setNombreUsuario(user.nombre);
 
         const response = await axios.post(
-          "http://localhost:4000/api/certificados/generar",
+          `${API_URL}/api/certificados/generar`,
           {
             alumno_id: user.alumno_id,
             modulo_id: 5, // ✅ Es el 5, no el 1
@@ -37,9 +40,9 @@ export default function GenerarCertificado() {
         );
 
         // ✅ Tu backend regresa 'archivo', no 'url'
-        if (response.data?.success && response.data?.archivo) {
-          window.open("http://localhost:4000" + response.data.archivo, "_blank");
-          setMostrarAgradecimiento(true); // Muestra el modal
+        if (response.data?.success && response.data?.archivo) 
+          window.open(`${API_URL}${response.data.archivo}`, "_blank");
+        setMostrarAgradecimiento(true); // Muestra el modal
         } else {
           alert("Error al generar certificado");
           navigate("/perfil");
