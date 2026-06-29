@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+//cambio que se le hizo
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
 function PanelWhatsApp() {
     const [dudas, setDudas] = useState([]);
     const [stats, setStats] = useState(null);
@@ -23,12 +26,16 @@ function PanelWhatsApp() {
     const cargarDatos = async () => {
         try {
             setLoading(true);
-            const statsRes = await axios.get('http://localhost:4000/api/admin/whatsapp/stats');
+            //const statsRes = await axios.get('http://localhost:4000/api/admin/whatsapp/stats');
+            const statsRes = await axios.get(`${API_URL}/api/admin/whatsapp/stats`);
             setStats(statsRes.data);
-
+           
+           // const url = filtro === 'todas'
+             //   ? 'http://localhost:4000/api/admin/whatsapp/dudas'
+               // : `http://localhost:4000/api/admin/whatsapp/dudas/estado/${filtro}`;
             const url = filtro === 'todas'
-                ? 'http://localhost:4000/api/admin/whatsapp/dudas'
-                : `http://localhost:4000/api/admin/whatsapp/dudas/estado/${filtro}`;
+                ? `${API_URL}/api/admin/whatsapp/dudas`
+                : `${API_URL}/api/admin/whatsapp/dudas/estado/${filtro}`;
 
             const dudasRes = await axios.get(url);
             setDudas(dudasRes.data);
@@ -46,7 +53,8 @@ function PanelWhatsApp() {
     const registrarDudaManual = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:4000/api/admin/whatsapp/registrar-duda', nuevaDuda);
+            //await axios.post('http://localhost:4000/api/admin/whatsapp/registrar-duda', nuevaDuda);
+            await axios.post(`${API_URL}/api/admin/whatsapp/registrar-duda`, nuevaDuda);
             setMostrarForm(false);
             setNuevaDuda({ nombre: '', telefono: '', mensaje: '', modulo: '/' });
             cargarDatos();
@@ -58,7 +66,8 @@ function PanelWhatsApp() {
 
     const cambiarEstado = async (id, nuevoEstado) => {
         try {
-            await axios.put(`http://localhost:4000/api/admin/whatsapp/dudas/${id}`, {
+            //await axios.put(`http://localhost:4000/api/admin/whatsapp/dudas/${id}`, {
+            await axios.put(`${API_URL}/api/admin/whatsapp/dudas/${id}`, {
                 estado: nuevoEstado
             });
             cargarDatos();
@@ -70,7 +79,8 @@ function PanelWhatsApp() {
     const eliminarDuda = async (id) => {
         if (!confirm('¿Seguro que quieres eliminar esta duda?')) return;
         try {
-            await axios.delete(`http://localhost:4000/api/admin/whatsapp/dudas/${id}`);
+          //  await axios.delete(`http://localhost:4000/api/admin/whatsapp/dudas/${id}`);
+            await axios.delete(`${API_URL}/api/admin/whatsapp/dudas/${id}`);
             cargarDatos();
         } catch (err) {
             console.error('💥 Error eliminando:', err);
