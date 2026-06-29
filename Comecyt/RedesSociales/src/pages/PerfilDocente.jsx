@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Css/PerfilDocente.css";
 
+// URL del backend
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function PerfilDocente() {
   const [docente, setDocente] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +61,7 @@ export default function PerfilDocente() {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:4000/api/docente/datos",
+          `${API_URL}/api/docente/datos`,
           { correo },
           getAuthHeaders()
         );
@@ -118,7 +121,7 @@ export default function PerfilDocente() {
 
     try {
       await axios.put(
-        "http://localhost:4000/api/docente/actualizar",
+        `${API_URL}/api/docente/actualizar`,
         docente,
         getAuthHeaders()
       );
@@ -162,7 +165,7 @@ export default function PerfilDocente() {
 
     try {
       await axios.put(
-        "http://localhost:4000/api/docente/password",
+        `${API_URL}/api/docente/password`,
         {
           docente_id: docente.docente_id,
           password_actual: passwordActual,
