@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Css/UsuariosAdmin.css";
 
+// Se agrega la URL del backend
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function UsuariosAdmin() {
   const [alumnos, setAlumnos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +49,7 @@ export default function UsuariosAdmin() {
   const cargarAlumnos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/alumnos"
+        `${API_URL}/api/admin/alumnos`
       );
       setAlumnos(data);
       setError("");
@@ -90,7 +93,7 @@ export default function UsuariosAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/alumnos/${editing}`,
+        `${API_URL}/api/admin/alumnos/${editing}`,
         form
       );
 
@@ -120,7 +123,7 @@ export default function UsuariosAdmin() {
     if (!confirmDelete) return;
     try {
       await axios.delete(
-        `http://localhost:4000/api/admin/alumnos/${confirmDelete.alumno_id}`
+        `${API_URL}/api/admin/alumnos/${confirmDelete.alumno_id}`
       );
 
       setAlumnos((prev) =>
@@ -168,8 +171,8 @@ export default function UsuariosAdmin() {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/admin/alumnos", {
-        nombre: createForm.nombre,
+      await axios.post(`${API_URL}/api/admin/alumnos`, {
+      nombre: createForm.nombre,
         apellido: createForm.apellido,
         correo: createForm.correo,
         contraseña: createForm.password,
