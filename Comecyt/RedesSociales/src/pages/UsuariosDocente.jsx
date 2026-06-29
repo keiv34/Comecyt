@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Css/UsuariosDocente.css";
 
+// URL del backend
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function UsuariosDocente() {
   const [alumnos, setAlumnos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +35,7 @@ export default function UsuariosDocente() {
   const cargarAlumnos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/docente/usuarios"
+        `${API_URL}/api/docente/usuarios`
       );
       setAlumnos(data);
       setError("");
@@ -72,7 +75,7 @@ export default function UsuariosDocente() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/docente/usuarios/${editing}`,
+        `${API_URL}/api/docente/usuarios/${editing}`,
         form
       );
 
