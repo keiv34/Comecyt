@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Css/ModulosAdmin.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function ModulosAdmin() {
   const [modulos, setModulos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export default function ModulosAdmin() {
   const cargarModulos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/modulos"
+        `${API_URL}/api/admin/modulos`
       );
       setModulos(data || []);
       setError("");
@@ -71,7 +73,7 @@ export default function ModulosAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/modulos/${editing}`,
+        `${API_URL}/api/admin/modulos/${editing}`,
         form
       );
 
