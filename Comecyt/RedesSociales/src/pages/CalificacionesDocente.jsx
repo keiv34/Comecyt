@@ -27,8 +27,8 @@ export default function CalificacionesDocente() {
     const fetchData = async () => {
       try {
         const [rTop, rLista] = await Promise.all([
-          axios.get("http://localhost:4000/api/docente/calificaciones/top5"),
-          axios.get("http://localhost:4000/api/docente/calificaciones"),
+          axios.get(`${API_URL}/api/docente/calificaciones/top5"),
+          axios.get(`${API_URL}/api/docente/calificaciones`)
         ]);
 
         setTop5(rTop.data || []);
