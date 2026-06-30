@@ -26,11 +26,10 @@ export default function CalificacionesDocente() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [rTop, rLista] = await Promise.all([
-          axios.get(`${API_URL}/api/docente/calificaciones/top5"),
-          axios.get(`${API_URL}/api/docente/calificaciones`)
-        ]);
-
+       const [rTop, rLista] = await Promise.all([
+         axios.get(`${API_URL}/api/docente/calificaciones/top5`),
+         axios.get(`${API_URL}/api/docente/calificaciones`)
+       ]);
         setTop5(rTop.data || []);
         setLista(rLista.data || []);
         setError("");
