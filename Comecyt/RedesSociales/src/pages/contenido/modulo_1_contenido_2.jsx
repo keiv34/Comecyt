@@ -5,6 +5,18 @@ import "../../Css/modulo_1_contenido_2.css";
 import placeholder from "../../assets/placeholder.png";
 
 
+import paso1Img from "../../assets/paso1.png";
+import paso2Img from "../../assets/paso2.png";
+import paso3Img from "../../assets/paso3.png";
+import paso4Img from "../../assets/paso4.png";
+import paso5Img from "../../assets/paso5.png";
+import paso5_1Img from "../../assets/paso5_1.png";
+import paso6Img from "../../assets/paso6.png";
+import paso7Img from "../../assets/paso7.png";
+import paso8Img from "../../assets/paso8.png";
+import paso9Img from "../../assets/paso9.png";
+import paso10Img from "../../assets/paso10.png";
+
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 2;
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
