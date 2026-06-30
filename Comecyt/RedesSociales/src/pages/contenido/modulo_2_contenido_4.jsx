@@ -5,7 +5,7 @@ import axios from "axios";
 import "../../Css/modulo_2_contenido_4.css";
 
 // o si es relativo
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL;
 const MODULO_ID = 2; // ✅ Es módulo 2
 const NUM_CONTENIDO = 4;
 
