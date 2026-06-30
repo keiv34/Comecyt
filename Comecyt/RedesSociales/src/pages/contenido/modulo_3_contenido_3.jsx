@@ -6,7 +6,7 @@ import "@/Css/modulo_3_contenido_3.css";
 
 // 🔹 Imágenes de ejemplo para los pasos (1–6)
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 3;
 const TOTAL_PREGUNTAS = 6;
