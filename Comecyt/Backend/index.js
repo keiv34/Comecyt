@@ -8,6 +8,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import jwt from "jsonwebtoken";
+import progresoRoutes from "./routes/progreso.js"; // Asegúrate de que la ruta del archivo sea correcta
 
 // ✅ RUTAS - CORREGIDOS LOS NOMBRES chan no jala
 import authRoutes from "./routes/authRoutes.js";
@@ -545,16 +546,22 @@ app.post('/api/alumno/estadisticas', (req, res) => {
   });
 });
 
-// ✅ Rutas de API - CORREGIDO EL PREFIJO
 console.log('🔥 [SERVER] Montando /api/auth...');
 app.use("/api/auth", authRoutes);
 
 console.log('🔥 [SERVER] Montando /api/alumno...');
 app.use("/api/alumno", alumnoRoutes);
+
+// --- AQUÍ ESTÁ EL CAMBIO ---
+// En lugar de app.use("/api/alumno", progresoRoutes), 
+// montamos las rutas de progreso directamente bajo /progreso 
+// para coincidir con lo que el frontend está pidiendo.
+app.use("/progreso", progresoRoutes); 
+// ----------------------------
+
 app.use("/api/modulo", modulosRoutes);
 app.use("/api/docente", docenteRoutes);
 app.use("/api/admin", adminRoutes);
-// ✅ AGREGADO: Ruta de certificados
 app.use("/api/certificados", certificadosRoutes);
 
 // ===== LISTAR TODAS LAS RUTAS REGISTRADAS - VERSIÓN SEGURA =====
