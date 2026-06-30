@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_1_contenido_2.css";
 
-import requisitosImg from "../../assets/placeholder.png";
+import requisitosImg from "../../assets/requisitosImg.png";
 import paso1Img from "../../assets/paso1.png";
 import paso2Img from "../../assets/paso2.png";
 import paso3Img from "../../assets/paso3.png";
