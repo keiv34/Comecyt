@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_1_contenido_4.css";
+import formatoImg from "../../assets/formato.jpg";
+import redactarImg from "../../assets/redactar.jpg";
 
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 4;
