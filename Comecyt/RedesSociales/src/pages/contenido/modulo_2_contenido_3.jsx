@@ -8,7 +8,7 @@ import gruposImg from "../../assets/gruposImg.png";
 import paginasImg from "../../assets/paginasImg.png";
 import eventosImg from "../../assets/eventosImg.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL
 const MODULO_ID = 2; // ✅ CORREGIDO: era 2
 const NUM_CONTENIDO = 3;
 
