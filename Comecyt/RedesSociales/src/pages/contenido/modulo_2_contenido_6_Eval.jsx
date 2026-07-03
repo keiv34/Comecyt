@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_6_Eval.css";
 
-const API_URL = "http://localhost:4000";
+const API_URL = "https://backend-production-0a25.up.railway.app";
 const MODULO_ID = 2; // ✅ CORREGIDO: Era 1, ahora 2 porque es Facebook
 const NUM_CONTENIDO = 6; // ✅ CORREGIDO: Ajusta según cuántos contenidos tiene el módulo 2
 const EVALUACION_ID = 2; // ⚠️ ajusta este ID según tu BD
