@@ -61,7 +61,6 @@ export default function ModuloFacebookGruposPaginasEventos() {
 
 const p = Number(modulo?.progreso_actual ?? 0);
 
-        const p = Number(modulo1?.progreso_actual ?? 0);
         setProgreso(p);
         setProgresoCargado(true);
 
