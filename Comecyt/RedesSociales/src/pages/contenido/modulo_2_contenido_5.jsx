@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_5.css";
-import Publicacion_fbImg from "../../assets/Publicacion_fb.png";
-import Seguridad_fbImg from "../../assets/Seguridad_fb.png";
+
+
+import Publicacion_fbImg from "../../assets/Publicacion_fbImg.png";
+import Seguridad_fbImg from "../../assets/seguridad_img.png";
 import Seguridad2_fbImg from "../../assets/Seguridad2_fb.png";
 import Paso2_fbImg from "../../assets/Paso2_fb.png";
 import RecuperarCon_fbImg from "../../assets/RecuperarCon_fb.png";
