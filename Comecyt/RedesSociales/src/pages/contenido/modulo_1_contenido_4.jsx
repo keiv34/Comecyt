@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_1_contenido_4.css";
 
+import redactarImg from "../../assets/redactarImg.png";
+import formatoImg from "../../assets/formatoImg.png";
+
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 4;
 
