@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_3.css";
 
+import gruposImg from "../../assets/gruposImg.png";
+import paginasImg from "../../assets/paginasImg.png";
+import eventosImg from "../../assets/eventosImg.png";
 
 const API_URL = "http://localhost:4000";
 const MODULO_ID = 2; // ✅ CORREGIDO: era 2
