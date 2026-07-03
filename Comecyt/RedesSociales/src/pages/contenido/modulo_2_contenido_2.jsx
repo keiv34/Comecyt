@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_2.css";
 
+import paso1FbImg from "../../assets/paso1FbImg.png";
+import paso2FbImg from "../../assets/paso2FbImg.png";
+import paso3FbImg from "../../assets/paso3FbImg.png";
+import paso4FbImg from "../../assets/paso4FbImg.png";
+import paso5FbImg from "../../assets/paso5FbImg.png";
+import paso6FbImg from "../../assets/paso6FbImg.png";
+import paso7FbImg from "../../assets/paso7FbImg.png";
+import paso8FbImg from "../../assets/paso8FbImg.png";
+
 
 //const API_URL = "http://localhost:4000";
 const API_URL = import.meta.env.VITE_API_URL;
