@@ -30,6 +30,7 @@ export default function ModuloFacebookGruposPaginasEventos() {
   // ✅ STATES AGREGADOS PARA FIX
   const [guardando, setGuardando] = useState(false);
   const [progresoCargado, setProgresoCargado] = useState(false);
+  const [totalContenidos, setTotalContenidos] = useState(6);
 
   const navigate = useNavigate();
 
@@ -54,9 +55,11 @@ export default function ModuloFacebookGruposPaginasEventos() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const modulo1 = resp.data.modulos.find(
-          (m) => m.modulo_id === MODULO_ID
-        );
+       if (modulo) {
+    setTotalContenidos(modulo.total_contenidos);
+}
+
+const p = Number(modulo?.progreso_actual ?? 0);
 
         const p = Number(modulo1?.progreso_actual ?? 0);
         setProgreso(p);
