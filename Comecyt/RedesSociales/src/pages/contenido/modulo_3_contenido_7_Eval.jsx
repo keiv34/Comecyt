@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "@/Css/modulo_3_contenido_7_Eval.css";
 
-const API_URL = "http://localhost:4000";
+
+
+const API_URL = import.meta.env.VITE_API_URL
 const MODULO_ID = 3; // ✅ Es módulo 1 - Examen final del módulo 1
 const NUM_CONTENIDO = 7;
 const EVALUACION_ID = 3; // Examen final Módulo 1
