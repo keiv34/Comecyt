@@ -4,8 +4,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "@/Css/modulo_3_contenido_6 copy.css";
 
+import wImagenPerfilImg from "../../assets/wImagenPerfilImg.png";
+import WImagenMensajesImg from "../../assets/WImagenMensajesImg.png";
+import ImagenEtiquetasImg from "../../assets/ImagenEtiquetasImg.png";
+import ImagenEstadisticasImg from "../../assets/ImagenEstadisticasImg.png";
+import ImagenCatalogoImg from "../../assets/ImagenCatalogoImg.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 6;
 const TOTAL_PREGUNTAS = 6;
