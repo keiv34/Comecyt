@@ -168,7 +168,7 @@ export default function ContenidoWhatsappExamenFinal() {
       if (!correo) return;
 
       const { data } = await axios.post(
-        `${API_URL}/api/alumno/evaluacion/resultado`
+        `${API_URL}/api/alumno/evaluacion/resultado`,
         { correo, evaluacion_id: EVALUACION_ID, puntaje: score }
       );
 
