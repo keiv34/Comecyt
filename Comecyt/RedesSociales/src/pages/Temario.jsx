@@ -22,7 +22,15 @@ function Temario() {
 
       try {
         // Este endpoint debe devolver todos los contenidos completados del usuario
-        const res = await axios.get(`${API_URL}/api/alumno/progreso/contenidos-completados/${correo}`);
+      const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${API_URL}/api/alumno/progreso/contenidos-completados/${correo}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
         // Agrupamos por modulo_id: {1: [1,2,3], 2: [1,2],...}
         const agrupados = {};
