@@ -27,7 +27,7 @@ export default function CertificadosDocente() {
     const fetchCerts = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/docente/certificados"
+          "https://backend-production-0a25.up.railway.app/api/docente/certificados"
         );
         setLista(data || []);
         setError("");
