@@ -46,7 +46,7 @@ function RetoFormularioModulo5_1() {
     const navigate = useNavigate();
 
     const {
-        completeActivity,
+        completarContenidoBackend,
         isActivityCompleted,
         guardarProgresoBackend
     } = useCourseProgress();
@@ -136,25 +136,29 @@ function RetoFormularioModulo5_1() {
     };
 
     const enviarFormulario = () => {
-        if (!todasContestadas) {
-            alert("Por favor responde todas las preguntas antes de enviar");
-            return;
-        }
+    // 1. Esto se queda EXACTAMENTE IGUAL (tu validación)
+    if (!todasContestadas) {
+        alert("Por favor responde todas las preguntas antes de enviar");
+        return;
+    }
 
-        let aciertos = 0;
-        Object.keys(RESPUESTAS_CORRECTAS).forEach(key => {
-            if (respuestas[key] === RESPUESTAS_CORRECTAS[key]) aciertos++;
-        });
+    let aciertos = 0;
+    Object.keys(RESPUESTAS_CORRECTAS).forEach(key => {
+        if (respuestas[key] === RESPUESTAS_CORRECTAS[key]) aciertos++;
+    });
 
-        setCalificacion(aciertos);
-        setFormularioEnviado(true);
-        setMostrarResultados(true);
+    setCalificacion(aciertos);
+    setFormularioEnviado(true);
+    setMostrarResultados(true);
 
-        if (aciertos >= CALIFICACION_MINIMA) {
-            lanzarConfeti();
-            completeActivity(MODULO_ID, NUM_CONTENIDO);
-        }
-    };
+    // 2. Aquí es donde se hace el ajuste:
+    if (aciertos >= CALIFICACION_MINIMA) {
+        lanzarConfeti();
+        
+        // CAMBIADO: Antes decía completeActivity, ahora usa la función real del hook
+        completarContenidoBackend(MODULO_ID, NUM_CONTENIDO); 
+    }
+};
 
     const finalizarReto = async () => {
         if (!puedeAvanzar) return;
