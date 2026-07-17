@@ -5,7 +5,7 @@ import axios from "axios";
 import "../../Css/modulo_1_contenido_4.css";
 
 import redactarImg from "../../assets/redactarImg.png";
-import formatoImg from "../../assets/formatoImg.png";
+//import formatoImg from "../../assets/formatoImg.png";
 
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 4;
@@ -434,11 +434,7 @@ export default function ContenidoGmailPanelYRedaccion() {
           <div>
             <figure className="compose-figure">
               <div className="compose-frame">
-                <img
-                  src={formatoImg}
-                  alt="Opciones de formato"
-                  className="compose-image"
-                />
+                
               </div>
               <figcaption>Ejemplo del formato en Gmail.</figcaption>
             </figure>
