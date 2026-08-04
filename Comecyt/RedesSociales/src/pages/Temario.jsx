@@ -21,13 +21,12 @@ function Temario() {
       }
 
       try {
-        // Este endpoint debe devolver todos los contenidos completados del usuario
-      const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         const res = await axios.get(
-          ${API_URL}/api/alumno/progreso/contenidos-completados/${correo},
+          `${API_URL}/api/alumno/progreso/contenidos-completados/${correo}`,
           {
             headers: {
-              Authorization: Bearer ${token}
+              Authorization: `Bearer ${token}`
             }
           }
         );
@@ -137,8 +136,8 @@ function Temario() {
   };
 
   const estaBloqueado = (moduloId, contenidoId) => {
-    if (contenidoId === 1) return false; // El primero siempre abierto
-    return !estaCompletado(moduloId, contenidoId - 1); // Bloqueado si el anterior no está
+    if (contenidoId === 1) return false;
+    return !estaCompletado(moduloId, contenidoId - 1);
   };
 
   const handleClick = (tema, moduloId) => {
@@ -147,7 +146,7 @@ function Temario() {
       return;
     }
     window.scrollTo(0, 0);
-    navigate(/modulo/${moduloId}/contenido/${tema.contenidoId});
+    navigate(`/modulo/${moduloId}/contenido/${tema.contenidoId}`);
   };
 
   if (loading) return <div className="temario-container"><p>Cargando progreso...</p></div>;
