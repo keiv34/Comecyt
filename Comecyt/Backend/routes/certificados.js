@@ -23,7 +23,14 @@ router.post("/generar", async (req, res) => {
 
     try {
         const nombreCompleto = `${nombre} ${apellido}`;
-        const nombreArchivo = `Certificado_AGORA_${nombreCompleto}.pdf`;
+        
+        // Limpiamos el nombre para evitar problemas de codificación en las URLs
+        const nombreLimpio = nombreCompleto
+            .normalize("NFD") // Separa las letras de los acentos
+            .replace(/[\u0300-\u036f]/g, "") // Elimina los acentos (ej. ó -> o)
+            .replace(/\s+/g, '_'); // Reemplaza los espacios por guiones bajos
+            
+        const nombreArchivo = `Certificado_AGORA_${nombreLimpio}.pdf`;
         const rutaCompleta = path.join(CERTS_DIR, nombreArchivo);
 
         console.log(`📍 Guardando en: ${rutaCompleta}`);
