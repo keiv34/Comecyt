@@ -94,7 +94,7 @@ router.post("/generar", async (req, res) => {
 
         res.json({
             success: true,
-            archivo: `/certificados/${nombreArchivo}`,
+            archivo: `/api/certificados/descargar/${nombreArchivo}`,
             mensaje: "Certificado generado correctamente"
         });
 
