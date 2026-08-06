@@ -62,6 +62,12 @@ router.post("/generar", async (req, res) => {
 
     try {
         const nombreCompleto = `${nombre} ${apellido}`;
+        
+        // Formatear el nombre para que cada palabra inicie con mayúscula (ej. Ismael Antonio Gonzalez)
+        const nombreMostrar = nombreCompleto
+            .split(' ')
+            .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase())
+            .join(' ');
 
         const nombreLimpio = nombreCompleto
             .normalize("NFD")
@@ -98,17 +104,15 @@ router.post("/generar", async (req, res) => {
         doc.rect(0, 0, pageWidth, pageHeight).fill('#f4f6f9');
 
         // 2) Esquinas geométricas (detrás de la tarjeta blanca)
-        dibujarEsquinaGeometrica(doc, { x: pageWidth, y: 0 }, { x: -1, y: 1 });   // arriba-derecha
-        dibujarEsquinaGeometrica(doc, { x: 0, y: pageHeight }, { x: 1, y: -1 });  // abajo-izquierda
+        dibujarEsquinaGeometrica(doc, { x: pageWidth, y: 0 }, { x: -1, y: 1 });   
+        dibujarEsquinaGeometrica(doc, { x: 0, y: pageHeight }, { x: 1, y: -1 });  
 
         // 3) Tarjeta blanca central con sombra simulada
         const cardX = 60, cardY = 50;
         const cardW = pageWidth - cardX * 2;
         const cardH = pageHeight - cardY * 2;
         
-        // Sombra sutil
         doc.rect(cardX + 5, cardY + 5, cardW, cardH).fill('#e0e4eb');
-        // Tarjeta principal
         doc.rect(cardX, cardY, cardW, cardH).fill('#ffffff');
 
         // ===== Contenido =====
@@ -125,22 +129,27 @@ router.post("/generar", async (req, res) => {
             .text('CONSTANCIA', cardX, cursorY, {
                 width: cardW,
                 align: 'center',
-                characterSpacing: 14 // Letras separadas como en la imagen
+                characterSpacing: 14 
             });
 
-        // Párrafo descriptivo
+        // 🔴 Párrafo descriptivo CORREGIDO (Sin continued: true)
         cursorY = doc.y + 20;
+        
         doc.font('Helvetica').fontSize(14).fillColor(GRIS_TEXTO)
-            .text(`Por haber concluido satisfactoriamente el curso de `, cardX + 70, cursorY, { width: cardW - 140, align: 'center', continued: true, lineGap: 4 })
-            .font('Helvetica-Bold')
-            .text(`${NOMBRE_CURSO}, `, { continued: true })
-            .font('Helvetica')
-            .text(`demostrando compromiso, participación activa y la adquisición de competencias digitales esenciales para el entorno actual.`);
+            .text('Por haber concluido satisfactoriamente el curso de', cardX, cursorY, { width: cardW, align: 'center' });
+
+        doc.font('Helvetica-Bold')
+            .text(`${NOMBRE_CURSO},`, cardX, doc.y + 4, { width: cardW, align: 'center' });
+
+        doc.font('Helvetica')
+            .text('demostrando compromiso, participación activa y la adquisición de competencias', cardX, doc.y + 4, { width: cardW, align: 'center' });
+            
+        doc.text('digitales esenciales para el entorno actual.', cardX, doc.y + 2, { width: cardW, align: 'center' });
 
         // Nombre del Alumno
         cursorY = doc.y + 40;
         doc.font('Helvetica-Bold').fontSize(24).fillColor('#222222')
-            .text(nombreCompleto, cardX, cursorY, { width: cardW, align: 'center' });
+            .text(nombreMostrar, cardX, cursorY, { width: cardW, align: 'center' });
 
         // Línea debajo del nombre
         const yFirma = doc.y + 8;
