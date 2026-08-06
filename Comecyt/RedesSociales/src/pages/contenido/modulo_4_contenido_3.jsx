@@ -4,8 +4,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_4_contenido_3.css";
 
+import igFeedIntroImg from "../../assets/igFeedIntroImg.jpg";
+import igFeedPaso1Img from "../../assets/igFeedPaso1Img.jpg";
+import igFeedPaso2Img from "../../assets/igFeedPaso2Img.jpg";
+import igFeedPaso3Img from "../../assets/igFeedPaso3Img.jpg";
 
-const API_URL = "http://localhost:4000";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 3;
 const TOTAL_PREGUNTAS = 6;
