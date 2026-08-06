@@ -11,6 +11,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CERTS_DIR = path.join(__dirname, '../Certificados');
 
+// Logo opcional — si no existe el archivo, simplemente no se dibuja
+const LOGO_PATH = path.join(__dirname, '../assets/logo.png');
+
 // Crear carpeta si no existe
 if (!fs.existsSync(CERTS_DIR)) {
     fs.mkdirSync(CERTS_DIR, { recursive: true });
@@ -23,13 +26,13 @@ router.post("/generar", async (req, res) => {
 
     try {
         const nombreCompleto = `${nombre} ${apellido}`;
-        
+
         // Limpiamos el nombre para evitar problemas de codificación en las URLs
         const nombreLimpio = nombreCompleto
-            .normalize("NFD") // Separa las letras de los acentos
-            .replace(/[\u0300-\u036f]/g, "") // Elimina los acentos (ej. ó -> o)
-            .replace(/\s+/g, '_'); // Reemplaza los espacios por guiones bajos
-            
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, '_');
+
         const nombreArchivo = `Certificado_AGORA_${nombreLimpio}.pdf`;
         const rutaCompleta = path.join(CERTS_DIR, nombreArchivo);
 
@@ -44,42 +47,143 @@ router.post("/generar", async (req, res) => {
         const doc = new PDFDocument({
             size: 'A4',
             layout: 'landscape',
-            margin: 50
+            margin: 0
         });
 
         const stream = fs.createWriteStream(rutaCompleta);
         doc.pipe(stream);
 
-        // ✅ COORDENADAS EXACTAS en lugar de align center
-        doc.fontSize(40).text('CERTIFICADO COMECYT', 50, 100, {
-            width: 740,
-            align: 'center'
-        });
+        const pageWidth = doc.page.width;   // ~842
+        const pageHeight = doc.page.height; // ~595
 
-        doc.fontSize(20).text('Se otorga el presente a:', 50, 200, {
-            width: 740,
-            align: 'center'
-        });
+        // 🎨 Paleta
+        const DORADO = '#C9A24D';
+        const GUINDA = '#4a1525';
+        const GRIS_TEXTO = '#444444';
+        const GRIS_CLARO = '#888888';
 
-        doc.fontSize(35).text(nombreCompleto, 50, 260, {
-            width: 740,
-            align: 'center'
-        });
+        // 🟨 Fondo con marco doble decorativo
+        doc.rect(0, 0, pageWidth, pageHeight).fill('#fffdf8');
 
-        doc.fontSize(16).text('Por haber completado satisfactoriamente el curso', 50, 330, {
-            width: 740,
-            align: 'center'
-        });
+        doc
+            .lineWidth(3)
+            .strokeColor(DORADO)
+            .rect(25, 25, pageWidth - 50, pageHeight - 50)
+            .stroke();
 
-        doc.fontSize(18).text('"Redes Sociales para Emprendedores"', 50, 360, {
-            width: 740,
-            align: 'center'
-        });
+        doc
+            .lineWidth(1)
+            .strokeColor(DORADO)
+            .rect(35, 35, pageWidth - 70, pageHeight - 70)
+            .stroke();
 
-        doc.fontSize(14).text(`Fecha: ${new Date().toLocaleDateString('es-MX')}`, 50, 420, {
-            width: 740,
-            align: 'center'
-        });
+        // 🟢 Logo (si existe)
+        if (fs.existsSync(LOGO_PATH)) {
+            doc.image(LOGO_PATH, pageWidth / 2 - 45, 55, { width: 90 });
+        }
+
+        // 🟨 Título
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(38)
+            .fillColor(GUINDA)
+            .text('CERTIFICADO', 0, fs.existsSync(LOGO_PATH) ? 155 : 90, {
+                width: pageWidth,
+                align: 'center'
+            });
+
+        doc
+            .font('Helvetica')
+            .fontSize(14)
+            .fillColor(GRIS_TEXTO)
+            .text('DE FINALIZACIÓN', 0, doc.y + 2, {
+                width: pageWidth,
+                align: 'center',
+                characterSpacing: 2
+            });
+
+        // Texto introductorio
+        doc
+            .moveDown(1.5)
+            .font('Helvetica')
+            .fontSize(14)
+            .fillColor(GRIS_TEXTO)
+            .text('Se otorga el presente a:', {
+                width: pageWidth,
+                align: 'center'
+            });
+
+        // 🟢 Nombre del alumno
+        doc
+            .moveDown(0.8)
+            .font('Times-BoldItalic')
+            .fontSize(34)
+            .fillColor(GUINDA)
+            .text(nombreCompleto, 60, doc.y, {
+                width: pageWidth - 120,
+                align: 'center'
+            });
+
+        // Texto del curso
+        doc
+            .moveDown(1)
+            .font('Helvetica')
+            .fontSize(15)
+            .fillColor(GRIS_TEXTO)
+            .text('Por haber completado satisfactoriamente el curso', {
+                width: pageWidth,
+                align: 'center'
+            });
+
+        doc
+            .moveDown(0.3)
+            .font('Helvetica-Bold')
+            .fontSize(18)
+            .fillColor(GUINDA)
+            .text('"Redes Sociales para Emprendedores"', {
+                width: pageWidth,
+                align: 'center'
+            });
+
+        // ✍️ Firma centrada
+        const yFirma = pageHeight - 130;
+        doc
+            .strokeColor(GRIS_CLARO)
+            .lineWidth(1)
+            .moveTo(pageWidth / 2 - 110, yFirma)
+            .lineTo(pageWidth / 2 + 110, yFirma)
+            .stroke();
+
+        doc
+            .font('Helvetica')
+            .fontSize(11)
+            .fillColor(GRIS_TEXTO)
+            .text('FIRMA', pageWidth / 2 - 110, yFirma + 8, {
+                width: 220,
+                align: 'center'
+            });
+
+        // Fecha y folio
+        doc
+            .font('Helvetica')
+            .fontSize(11)
+            .fillColor(GRIS_CLARO)
+            .text(`Fecha de emisión: ${new Date().toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })}`, 0, pageHeight - 70, {
+                width: pageWidth,
+                align: 'center'
+            });
+
+        doc
+            .fontSize(9)
+            .fillColor('#bbbbbb')
+            .text(`Folio: AGORA-${alumno_id || 'X'}-${modulo_id || 'X'}-${Date.now()}`, 0, doc.y + 4, {
+                width: pageWidth,
+                align: 'center'
+            });
 
         doc.end();
 
