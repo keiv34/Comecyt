@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-//se le agrego
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export default function GenerarCertificado() {
@@ -14,7 +13,7 @@ export default function GenerarCertificado() {
     const generar = async () => {
       try {
         const token = localStorage.getItem("token");
-        const user = JSON.parse(localStorage.getItem("user")); // Tu user debe tener nombre, apellido, alumno_id
+        const user = JSON.parse(localStorage.getItem("user"));
 
         if (!user) {
           alert("No hay sesión activa");
@@ -39,10 +38,10 @@ export default function GenerarCertificado() {
           }
         );
 
-        // ✅ Tu backend regresa 'archivo', no 'url'
-        if (response.data?.success && response.data?.archivo) 
+        // ✅ Se agregó la llave { faltante para envolver correctamente el bloque if
+        if (response.data?.success && response.data?.archivo) {
           window.open(`${API_URL}${response.data.archivo}`, "_blank");
-        setMostrarAgradecimiento(true); // Muestra el modal
+          setMostrarAgradecimiento(true); // Muestra el modal
         } else {
           alert("Error al generar certificado");
           navigate("/perfil");
@@ -59,36 +58,85 @@ export default function GenerarCertificado() {
   }, [navigate]);
 
   return (
-    <div style={{ padding: "40px", textAlign: "center" }}>
+    <div style={{ padding: "40px", textAlign: "center", backgroundColor: "#f3f4f6", minHeight: "100vh" }}>
       {!mostrarAgradecimiento ? (
-        <>
-          <h2>Generando certificado…</h2>
-          <p>Por favor espera</p>
-        </>
+        <div style={{ marginTop: "100px" }}>
+          <h2 style={{ fontFamily: "sans-serif", color: "#333" }}>Generando certificado…</h2>
+          <p style={{ fontFamily: "sans-serif", color: "#666" }}>Por favor espera</p>
+        </div>
       ) : (
+        /* Contenedor principal con estilo de constancia/certificado inspirado en la imagen */
         <div style={{
-          maxWidth: '500px',
-          margin: '0 auto',
-          padding: '40px',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '10px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+          maxWidth: '850px',
+          margin: '20px auto',
+          padding: '60px 50px',
+          backgroundColor: '#ffffff',
+          border: '12px double #dcaebb', /* Color palo de rosa/vino suave simulando los bordes decorativos */
+          borderRadius: '4px',
+          boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
+          fontFamily: '"Georgia", "Times New Roman", serif', /* Fuente formal */
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '450px'
         }}>
-          <h2>¡Felicidades {nombreUsuario}! 🎓</h2>
-          <p>Has completado exitosamente el curso "Redes Sociales para Emprendedores"</p>
-          <p>Gracias por ser parte de COMECYT. ¡Mucho éxito en tus proyectos!</p>
+          
+          <h2 style={{
+            fontSize: '42px',
+            color: '#4a1525', /* Guinda oscuro similar al texto CONSTANCIA */
+            textTransform: 'uppercase',
+            letterSpacing: '3px',
+            margin: '0 0 30px 0',
+            fontWeight: 'bold',
+            textAlign: 'center'
+          }}>
+            ¡Felicidades {nombreUsuario}! 🎓
+          </h2>
+          
+          <p style={{
+            fontSize: '24px',
+            color: '#222',
+            lineHeight: '1.6',
+            margin: '0 0 15px 0',
+            textAlign: 'center',
+            padding: '0 20px'
+          }}>
+            Has completado exitosamente el curso<br />
+            <strong style={{ fontSize: '28px', display: 'block', marginTop: '10px' }}>"Redes Sociales para Emprendedores"</strong>
+          </p>
+          
+          <p style={{
+            fontSize: '18px',
+            color: '#555',
+            fontStyle: 'italic',
+            margin: '20px 0 50px 0',
+            textAlign: 'center'
+          }}>
+            Gracias por ser parte de COMECYT. ¡Mucho éxito en tus proyectos!
+          </p>
+          
           <button
             onClick={() => navigate("/perfil")}
             style={{
-              marginTop: '20px',
-              padding: '12px 30px',
-              backgroundColor: '#007bff',
+              marginTop: 'auto',
+              padding: '14px 40px',
+              backgroundColor: '#4a1525', /* Botón a juego con el título principal */
               color: 'white',
               border: 'none',
-              borderRadius: '5px',
+              borderRadius: '8px',
               cursor: 'pointer',
-              fontSize: '16px'
+              fontSize: '16px',
+              fontFamily: 'sans-serif', /* Fuente moderna para el botón */
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+              transition: 'background-color 0.3s ease'
             }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#300d18'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#4a1525'}
           >
             Ir a mi perfil
           </button>
