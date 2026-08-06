@@ -84,40 +84,50 @@ export default function PerfilAlumno() {
 
   // ✅ USA TU BACKEND PARA GENERAR EL CERTIFICADO
   const generarCertificadoPDF = async () => {
-    if (!alumno) return;
+  if (!alumno) return;
 
-    setGenerandoCert(true);
-    try {
-      const response = await axios.post(
-        `${API_URL}/api/certificados/generar`,
-        {
-          alumno_id: alumno.alumno_id,
-          nombre: alumno.nombre,
-          apellido: alumno.apellido,
-          correo: alumno.correo
-        },
-        { responseType: 'blob' }
-      );
+  setGenerandoCert(true);
+  try {
+    // 1. Pide al backend que genere (o confirme) el certificado — esto SÍ regresa JSON
+    const response = await axios.post(
+      `${API_URL}/api/certificados/generar`,
+      {
+        alumno_id: alumno.alumno_id,
+        nombre: alumno.nombre,
+        apellido: alumno.apellido,
+        correo: alumno.correo
+      }
+      // ❌ sin responseType: 'blob' aquí — esta llamada regresa JSON, no el PDF
+    );
 
-      // Descarga el PDF que te regresa el backend
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `Certificado_AGORA_${alumno.nombre}_${alumno.apellido}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      showToast("Certificado descargado ✨", "success");
-      fetchData(); // Recarga para mostrar el nuevo certificado en la lista
-    } catch (err) {
-      console.error("Error al generar certificado:", err);
-      showToast("Error al generar certificado", "error");
-    } finally {
-      setGenerandoCert(false);
+    if (!response.data?.success || !response.data?.archivo) {
+      throw new Error("El backend no devolvió el archivo");
     }
-  };
+
+    // 2. AHORA sí pide el PDF binario real, con su propia petición
+    const pdfResponse = await axios.get(
+      `${API_URL}${response.data.archivo}`,
+      { responseType: 'blob' } // aquí SÍ es el PDF real
+    );
+
+    const url = window.URL.createObjectURL(new Blob([pdfResponse.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Certificado_AGORA_${alumno.nombre}_${alumno.apellido}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    showToast("Certificado descargado ✨", "success");
+    fetchData();
+  } catch (err) {
+    console.error("Error al generar certificado:", err);
+    showToast("Error al generar certificado", "error");
+  } finally {
+    setGenerandoCert(false);
+  }
+};
 
   const fetchData = useCallback(async () => {
     const correo = localStorage.getItem("correo");
