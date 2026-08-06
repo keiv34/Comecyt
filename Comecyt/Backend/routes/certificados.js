@@ -16,28 +16,44 @@ if (!fs.existsSync(CERTS_DIR)) {
     console.log(`📁 Carpeta creada: ${CERTS_DIR}`);
 }
 
-// 🌸 Dibuja un adorno tipo "flor de puntos" en una esquina
-function dibujarAdornoEsquina(doc, cx, cy, color, escalaX = 1, escalaY = 1) {
+// ===== Config de textos =====
+const INSTITUCION = 'Tecnológico de Estudios Superiores de San Felipe del Progreso';
+const NOMBRE_CURSO = 'Alfabetización Digital en Redes Sociales';
+const MODULOS_ACREDITADOS = [
+    'Correo Electrónico',
+    'Facebook',
+    'WhatsApp Business',
+    'Instagram',
+    'Retos Educaplay'
+];
+
+// 🔷 Dibuja el clúster de "esquirlas" diagonales azules en una esquina.
+function dibujarEsquinaGeometrica(doc, origin, dir) {
+    const { x: ox, y: oy } = origin;
+
     doc.save();
-    doc.fillColor(color);
+    doc.translate(ox, oy);
+    doc.scale(dir.x, dir.y);
 
-    const anillos = [
-        { radio: 60, puntos: 10, tam: 5, opacidad: 0.10 },
-        { radio: 42, puntos: 8, tam: 6, opacidad: 0.16 },
-        { radio: 24, puntos: 6, tam: 7, opacidad: 0.22 },
-    ];
+    const franja = (w, h, angleDeg, color, opacity = 1) => {
+        doc.save();
+        doc.rotate(angleDeg);
+        doc.opacity(opacity);
+        doc.rect(0, -h / 2, w, h).fill(color);
+        doc.opacity(1);
+        doc.restore();
+    };
 
-    anillos.forEach(anillo => {
-        doc.opacity(anillo.opacidad);
-        for (let i = 0; i < anillo.puntos; i++) {
-            const angulo = (Math.PI / 2) * (i / (anillo.puntos - 1));
-            const px = cx + Math.cos(angulo) * anillo.radio * escalaX;
-            const py = cy + Math.sin(angulo) * anillo.radio * escalaY;
-            doc.circle(px, py, anillo.tam).fill();
-        }
-    });
-
+    // Ajuste de colores para que coincida más con la imagen de referencia (tonos azules vibrantes)
     doc.opacity(1);
+    doc.polygon([0, 0], [340, 0], [0, 250]).fill('#051d59'); // Azul muy oscuro de base
+
+    franja(300, 55, -34, '#0a369d', 0.95);
+    franja(260, 34, -34, '#0056e0', 0.9);
+    franja(210, 18, -34, '#00a3ff', 0.85);
+    franja(150, 8, -20, '#ffffff', 0.35);
+    franja(120, 6, -46, '#00a3ff', 0.6);
+
     doc.restore();
 }
 
@@ -71,112 +87,99 @@ router.post("/generar", async (req, res) => {
         const stream = fs.createWriteStream(rutaCompleta);
         doc.pipe(stream);
 
-        const pageWidth = doc.page.width;
-        const pageHeight = doc.page.height;
+        const pageWidth = doc.page.width;   // ~842
+        const pageHeight = doc.page.height; // ~595
 
-        const DORADO = '#C9A24D';
-        const GUINDA = '#4a1525';
-        const GRIS_TEXTO = '#444444';
+        const AZUL_CONSTANCIA = '#103b87';
+        const GRIS_TEXTO = '#555555';
         const GRIS_CLARO = '#888888';
 
-        // Fondo base
-        doc.rect(0, 0, pageWidth, pageHeight).fill('#fffdf8');
+        // 1) Fondo general
+        doc.rect(0, 0, pageWidth, pageHeight).fill('#f4f6f9');
 
-        // 🌸 Adornos decorativos en las 4 esquinas (dentro del marco)
-        dibujarAdornoEsquina(doc, 55, 55, DORADO, 1, 1);
-        dibujarAdornoEsquina(doc, pageWidth - 55, 55, DORADO, -1, 1);
-        dibujarAdornoEsquina(doc, 55, pageHeight - 55, DORADO, 1, -1);
-        dibujarAdornoEsquina(doc, pageWidth - 55, pageHeight - 55, DORADO, -1, -1);
+        // 2) Esquinas geométricas (detrás de la tarjeta blanca)
+        dibujarEsquinaGeometrica(doc, { x: pageWidth, y: 0 }, { x: -1, y: 1 });   // arriba-derecha
+        dibujarEsquinaGeometrica(doc, { x: 0, y: pageHeight }, { x: 1, y: -1 });  // abajo-izquierda
 
-        // 🖼️ Marca de agua muy tenue del logo detrás del contenido
-        if (fs.existsSync(LOGO_PATH)) {
-            doc.save();
-            doc.opacity(0.06);
-            const wmSize = 260;
-            doc.image(LOGO_PATH, pageWidth / 2 - wmSize / 2, pageHeight / 2 - wmSize / 2, { width: wmSize });
-            doc.opacity(1);
-            doc.restore();
-        }
+        // 3) Tarjeta blanca central con sombra simulada
+        const cardX = 60, cardY = 50;
+        const cardW = pageWidth - cardX * 2;
+        const cardH = pageHeight - cardY * 2;
+        
+        // Sombra sutil
+        doc.rect(cardX + 5, cardY + 5, cardW, cardH).fill('#e0e4eb');
+        // Tarjeta principal
+        doc.rect(cardX, cardY, cardW, cardH).fill('#ffffff');
 
-        // 🟨 Marco doble
-        doc.lineWidth(3).strokeColor(DORADO)
-            .rect(25, 25, pageWidth - 50, pageHeight - 50).stroke();
-        doc.lineWidth(1).strokeColor(DORADO)
-            .rect(35, 35, pageWidth - 70, pageHeight - 70).stroke();
+        // ===== Contenido =====
+        
+        let cursorY = cardY + 50;
 
-        // 🟢 Logo superior (normal, no marca de agua)
-        if (fs.existsSync(LOGO_PATH)) {
-            doc.image(LOGO_PATH, pageWidth / 2 - 45, 55, { width: 90 });
-        }
+        // Institución (Top, Itálica)
+        doc.font('Helvetica-Oblique').fontSize(14).fillColor(GRIS_TEXTO)
+            .text(INSTITUCION, cardX, cursorY, { width: cardW, align: 'center' });
 
-        // ===== A PARTIR DE AQUÍ: todo texto de ancho completo usa x = 0 explícito =====
-
-        doc.font('Helvetica-Bold').fontSize(38).fillColor(GUINDA)
-            .text('CERTIFICADO', 0, fs.existsSync(LOGO_PATH) ? 155 : 90, {
-                width: pageWidth,
-                align: 'center'
-            });
-
-        doc.font('Helvetica').fontSize(14).fillColor(GRIS_TEXTO)
-            .text('DE FINALIZACIÓN', 0, doc.y + 2, {
-                width: pageWidth,
+        // Título CONSTANCIA
+        cursorY = doc.y + 25;
+        doc.font('Helvetica-Bold').fontSize(52).fillColor(AZUL_CONSTANCIA)
+            .text('CONSTANCIA', cardX, cursorY, {
+                width: cardW,
                 align: 'center',
-                characterSpacing: 2
+                characterSpacing: 14 // Letras separadas como en la imagen
             });
 
-        doc.moveDown(1.5);
+        // Párrafo descriptivo
+        cursorY = doc.y + 20;
         doc.font('Helvetica').fontSize(14).fillColor(GRIS_TEXTO)
-            .text('Se otorga el presente a:', 0, doc.y, {
-                width: pageWidth,
-                align: 'center'
-            });
+            .text(`Por haber concluido satisfactoriamente el curso de `, cardX + 70, cursorY, { width: cardW - 140, align: 'center', continued: true, lineGap: 4 })
+            .font('Helvetica-Bold')
+            .text(`${NOMBRE_CURSO}, `, { continued: true })
+            .font('Helvetica')
+            .text(`demostrando compromiso, participación activa y la adquisición de competencias digitales esenciales para el entorno actual.`);
 
-        doc.moveDown(0.8);
-        doc.font('Times-BoldItalic').fontSize(34).fillColor(GUINDA)
-            .text(nombreCompleto, 0, doc.y, {
-                width: pageWidth,
-                align: 'center'
-            });
+        // Nombre del Alumno
+        cursorY = doc.y + 40;
+        doc.font('Helvetica-Bold').fontSize(24).fillColor('#222222')
+            .text(nombreCompleto, cardX, cursorY, { width: cardW, align: 'center' });
 
-        doc.moveDown(1);
-        doc.font('Helvetica').fontSize(15).fillColor(GRIS_TEXTO)
-            .text('Por haber completado satisfactoriamente el curso', 0, doc.y, {
-                width: pageWidth,
-                align: 'center'
-            });
-
-        doc.moveDown(0.3);
-        doc.font('Helvetica-Bold').fontSize(18).fillColor(GUINDA)
-            .text('"Redes Sociales para Emprendedores"', 0, doc.y, {
-                width: pageWidth,
-                align: 'center'
-            });
-
-        // ✍️ Firma centrada
-        const yFirma = pageHeight - 130;
-        doc.strokeColor(GRIS_CLARO).lineWidth(1)
-            .moveTo(pageWidth / 2 - 110, yFirma)
-            .lineTo(pageWidth / 2 + 110, yFirma)
+        // Línea debajo del nombre
+        const yFirma = doc.y + 8;
+        doc.strokeColor(GRIS_TEXTO).lineWidth(1.5)
+            .moveTo(pageWidth / 2 - 220, yFirma)
+            .lineTo(pageWidth / 2 + 220, yFirma)
             .stroke();
 
-        doc.font('Helvetica').fontSize(11).fillColor(GRIS_TEXTO)
-            .text('FIRMA', pageWidth / 2 - 110, yFirma + 8, {
-                width: 220,
+        // Módulos Acreditados
+        cursorY = yFirma + 30;
+        doc.font('Helvetica-Bold').fontSize(12).fillColor(GRIS_TEXTO)
+            .text('MÓDULOS ACREDITADOS', cardX, cursorY, {
+                width: cardW,
+                align: 'center',
+                characterSpacing: 4
+            });
+
+        // Lista de Módulos
+        cursorY = doc.y + 6;
+        doc.font('Helvetica').fontSize(13).fillColor(GRIS_TEXTO)
+            .text(MODULOS_ACREDITADOS.join('   '), cardX, cursorY, {
+                width: cardW,
                 align: 'center'
             });
 
-        // Fecha y folio
-        doc.font('Helvetica').fontSize(11).fillColor(GRIS_CLARO)
-            .text(`Fecha de emisión: ${new Date().toLocaleDateString('es-MX', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            })}`, 0, pageHeight - 70, {
-                width: pageWidth,
+        // Fecha de emisión y Folio (Abajo)
+        const fechaTexto = new Date().toLocaleDateString('es-MX', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+        
+        doc.font('Helvetica-Oblique').fontSize(11).fillColor(GRIS_CLARO)
+            .text(`Fecha de expedición: ${fechaTexto}`, cardX, cardY + cardH - 45, {
+                width: cardW,
                 align: 'center'
             });
 
-        doc.fontSize(9).fillColor('#bbbbbb')
-            .text(`Folio: AGORA-${alumno_id || 'X'}-${modulo_id || 'X'}-${Date.now()}`, 0, doc.y + 4, {
-                width: pageWidth,
+        doc.font('Helvetica').fontSize(9).fillColor('#d3d3d3')
+            .text(`Folio: AGORA-${alumno_id || 'X'}-${modulo_id || 'X'}-${Date.now()}`, cardX, doc.y + 5, {
+                width: cardW,
                 align: 'center'
             });
 
@@ -192,9 +195,6 @@ router.post("/generar", async (req, res) => {
                 reject(err);
             });
         });
-
-        const stats = fs.statSync(rutaCompleta);
-        console.log(`📦 Tamaño del archivo: ${stats.size} bytes`);
 
         res.json({
             success: true,
