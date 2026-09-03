@@ -172,7 +172,7 @@ function Login() {
                             Á
                         </div>
                         <h1 style={{ color: '#00ffaa', margin: '0', fontSize: '48px' }}>ÁGORA PRUEBA </h1>
-                        <h2 style={{ color: 'white', margin: '10px 0' }}>Bienvenido</h2>
+                        <h2 style={{ color: 'white', margin: '10px 0' }}>Bienvenido Aqui</h2>
                         <p style={{ color: '#00ffaa' }}>¿Cómo deseas ingresar?</p>
                     </div>
 
