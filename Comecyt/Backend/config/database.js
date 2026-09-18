@@ -3,13 +3,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// En tu archivo config/database.js
 export const pool = mysql.createPool({
-  host: process.env.MYSQLHOST,
-  port: process.env.MYSQLPORT,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: 'railway', // <--- CAMBIA ESTO por el nombre real de tu base de datos
+  host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+  port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+  user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
+  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
+  database: process.env.DB_NAME || 'bd_comecyt',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -19,10 +18,10 @@ export const pool = mysql.createPool({
 (async () => {
   try {
     const conn = await pool.getConnection();
-    console.log("✅ Conectado a MySQL Railway");
+    console.log("✅ Conectado exitosamente a la Base de Datos local");
     conn.release();
   } catch (err) {
-    console.error("❌ Error conectando a MySQL");
+    console.error("❌ Error conectando a MySQL local");
     console.error(err);
   }
 })();
