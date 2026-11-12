@@ -7,7 +7,7 @@ import "../../Css/modulo_1_contenido_1.css";
 
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 1;
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 function Contenido1() {
   const [tiempoRestante, setTiempoRestante] = useState(120);

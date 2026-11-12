@@ -20,9 +20,6 @@ import certificadosRoutes from "./routes/certificados.js";
 dotenv.config();
 
 const app = express();
-console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-console.log("VERSION NUEVA DEL INDEX");
-console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 // Variables de WhatsApp
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
@@ -30,9 +27,7 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
 // Configuración OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 const allowedOrigins = [
   "https://comecyt.vercel.app",
@@ -111,9 +106,6 @@ const verificarToken = (req, res, next) => {
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleTimeString();
   console.log(`\n[${timestamp}] 🌐 ${req.method} ${req.originalUrl}`);
-  if ((req.method === 'POST' || req.method === 'PUT') && !req.originalUrl.includes('/webhook')) {
-    console.log(`[${timestamp}] 📦 Body:`, JSON.stringify(req.body, null, 2));
-  }
   next();
 });
 
@@ -250,6 +242,7 @@ async function respuestaIA(preguntaUsuario, telefono) {
 
     Usuario pregunta: ${preguntaUsuario}`;
 
+    if (!openai) return "El asistente de WhatsApp no está disponible en este momento.";
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
@@ -410,103 +403,6 @@ app.delete('/api/dudas/:id', async (req, res) => {
   }
 });
 
-// ===== PROGRESO DEL ALUMNO - VERSIÓN FINAL CON MODULO EN MAYÚSCULAS =====
-app.post('/api/alumno/progreso', verificarToken, async (req, res) => {
-  const { correo } = req.body;
-  console.log(`🔍 [PROGRESO] Consultando para: ${correo}`);
-
-  try {
-    // 1. Obtener módulos con progreso real - TABLA MODULO EN MAYÚSCULAS
-    const [modulos] = await pool.query(`
-      SELECT
-        m.modulo_id,
-        m.titulo,
-        m.descripcion,
-        COALESCE(p.progreso_actual, 0) as progreso_actual,
-        m.total_contenidos
-      FROM MODULO m
-      LEFT JOIN progreso_modulos p ON m.modulo_id = p.modulo_id AND p.correo =?
-      ORDER BY m.modulo_id ASC
-    `, [correo]);
-
-    console.log(`📊 [PROGRESO] Módulos encontrados:`, modulos);
-
-    // 2. Obtener contenidos completados
-    const [completados] = await pool.query(`
-      SELECT modulo_id, contenido_id
-      FROM contenidos_completados
-      WHERE correo =?
-    `, [correo]);
-
-    // 3. Calcular estadísticas
-    const modulosCompletados = modulos.filter(m => m.progreso_actual >= 100).length;
-    const totalContenidos = modulos.reduce((acc, m) => acc + m.total_contenidos, 0);
-    const contenidosCompletados = completados.length;
-    const porcentajeGeneral = totalContenidos > 0
-      ? Math.round((contenidosCompletados / totalContenidos) * 100)
-      : 0;
-
-    const respuesta = {
-      modulos,
-      contenidosCompletados: completados,
-      estadisticas: {
-        modulos_completados: modulosCompletados,
-        total_modulos: modulos.length,
-        contenidos_completados: contenidosCompletados,
-        total_contenidos: totalContenidos,
-        porcentaje_general: porcentajeGeneral
-      }
-    };
-
-    console.log(`✅ [PROGRESO] Enviando:`, respuesta);
-    res.json(respuesta);
-  } catch (err) {
-    console.error('❌ Error en /api/alumno/progreso:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ===== ACTUALIZAR PROGRESO - YA FUNCIONAL ===== ✅
-app.post('/api/alumno/progreso/actualizar', verificarToken, async (req, res) => {
-  const { correo, modulo_id, contenido_id } = req.body;
-
-  try {
-    // 1. Marcar contenido como completado
-    await pool.query(
-      'INSERT IGNORE INTO contenidos_completados (correo, modulo_id, contenido_id, fecha_completado) VALUES (?,?,?, NOW())',
-      [correo, modulo_id, contenido_id]
-    );
-
-    // 2. Calcular nuevo progreso del módulo
-    const [total] = await pool.query(
-      'SELECT total_contenidos FROM MODULO WHERE modulo_id =?',
-      [modulo_id]
-    );
-
-    const [completados] = await pool.query(
-      'SELECT COUNT(*) as count FROM contenidos_completados WHERE correo =? AND modulo_id =?',
-      [correo, modulo_id]
-    );
-
-    const totalContenidos = total[0].total_contenidos;
-    const contenidosCompletados = completados[0].count;
-    const nuevoProgreso = Math.round((contenidosCompletados / totalContenidos) * 100);
-
-    // 3. Actualizar o insertar progreso
-    await pool.query(`
-      INSERT INTO progreso_modulos (correo, modulo_id, progreso_actual)
-      VALUES (?,?,?)
-      ON DUPLICATE KEY UPDATE progreso_actual =?
-    `, [correo, modulo_id, nuevoProgreso, nuevoProgreso]);
-
-    console.log(`✅ Progreso actualizado: ${correo} - Módulo ${modulo_id}: ${nuevoProgreso}%`);
-    res.json({ success: true, progreso: nuevoProgreso });
-  } catch (err) {
-    console.error('❌ Error actualizando progreso:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
 app.post('/api/alumno/avatar', upload.single('avatar'), async (req, res) => {
   try {
     if (!req.file) {
@@ -530,19 +426,6 @@ app.post('/api/alumno/avatar', upload.single('avatar'), async (req, res) => {
     console.error('Error /api/alumno/avatar:', err);
     res.status(500).json({ error: err.message });
   }
-});
-
-app.post('/api/alumno/estadisticas', (req, res) => {
-  console.log('✅ Backend SÍ tiene /estadisticas');
-  res.json({
-    modulos_completados: 3,
-    total_modulos: 5,
-    contenidos_completados: 15,
-    total_contenidos: 29,
-    examenes_aprobados: 2,
-    total_examenes: 4,
-    porcentaje_general: 58
-  });
 });
 
 console.log('🔥 [SERVER] Montando /api/auth...');

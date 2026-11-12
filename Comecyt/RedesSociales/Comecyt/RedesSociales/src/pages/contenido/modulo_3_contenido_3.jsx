@@ -16,7 +16,7 @@ import whatsappLlamadasImg from "../../assets/whatsappLlamadas.png";
 import whatsappGruposImg from "../../assets/whatsappGrupos.png";
 import whatsappEstadosImg from "../../assets/whatsappEstados.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 3;
 const TOTAL_PREGUNTAS = 6;
@@ -209,7 +209,7 @@ export default function ContenidoWhatsappFunciones() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/3/contenido/16"); // ✅ Va al contenido 16 del módulo 3
+    navigate("/modulo/3/contenido/2");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

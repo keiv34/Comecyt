@@ -1,304 +1,76 @@
-// src/pages/Inicio.jsx
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../context/AuthContext";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import "../Css/Inicio.css";
+import { createElement, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, BookOpen, ChartNoAxesColumn, CheckCircle2, FolderOpen, GraduationCap, LockKeyhole, Mail, MessageCircle, Users, Camera, Wallet, ShieldCheck, Briefcase, Car, Bot, Puzzle } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { MODULOS, TOTAL_CONTENIDOS } from "../curso/catalogo";
+import "../Css/PanelAlumno.css";
 
-const API_URL = "http://localhost:4000";
+const iconos = [Mail, Users, MessageCircle, Camera, Puzzle, Wallet, ShieldCheck, FolderOpen, Briefcase, Car, Bot];
 
 export default function Inicio() {
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const [progresoData, setProgresoData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // ✅ CONFIGURACIÓN: Módulo 5 ahora termina en 16
-  const MODULOS = [
-    {
-      id: 1,
-      moduloId: 1,
-      nombre: "Correo Electrónico",
-      icono: "📧",
-      inicio: 1,
-      fin: 8,
-      descripcion: "Fundamentos de correo electrónico y comunicación digital"
-    },
-    {
-      id: 2,
-      moduloId: 2,
-      nombre: "Facebook & Marketplace",
-      icono: "📘",
-      inicio: 1,
-      fin: 6,
-      descripcion: "Perfiles, páginas, grupos, eventos, Marketplace y examen",
-      destacado: true
-    },
-    {
-      id: 3,
-      moduloId: 3,
-      nombre: "WhatsApp Business",
-      icono: "💬",
-      inicio: 1,
-      fin: 7,
-      descripcion: "Catálogos, mensajes automáticos y ventas"
-    },
-    {
-      id: 4,
-      moduloId: 4,
-      nombre: "Instagram",
-      icono: "📸",
-      inicio: 1,
-      fin: 8,
-      descripcion: "Historias, Reels, posts y estrategias"
-    },
-    {
-      id: 5,
-      moduloId: 5,
-      nombre: "Retos Finales",
-      icono: "🏆",
-      inicio: 1,
-      fin: 4,
-      descripcion: "Casos prácticos y evaluación final"
-    }
-  ];
-
-  const TOTAL_CONTENIDOS = MODULOS.reduce((acc, m) => acc + (m.fin - m.inicio + 1), 0);
-
-  const getProgresoModulo = (moduloId) => {
-    if (!progresoData?.modulos) return 0;
-    const mod = progresoData.modulos.find(m => m.modulo_id === moduloId);
-    return mod?.progreso_actual || 0;
-  };
-
-  const calcularPorcentaje = (modulo) => {
-    const { inicio, fin, moduloId } = modulo;
-    const total = fin - inicio + 1;
-    const progreso_actual = getProgresoModulo(moduloId);
-
-    if (progreso_actual < inicio) return 0;
-    if (progreso_actual >= fin) return 100;
-
-    const completados = progreso_actual - inicio + 1;
-    return Math.round((completados / total) * 100);
-  };
-
-  const estaDesbloqueado = (modulo) => {
-    if (modulo.id === 1) return true;
-    const moduloAnterior = MODULOS.find(m => m.id === modulo.id - 1);
-    if (!moduloAnterior) return false;
-
-    const progresoAnterior = getProgresoModulo(moduloAnterior.moduloId);
-    return progresoAnterior >= moduloAnterior.fin;
-  };
-
-  const obtenerDestinoClick = (modulo) => {
-    const { inicio, fin, moduloId } = modulo;
-    const progreso_actual = getProgresoModulo(moduloId);
-    const porcentaje = calcularPorcentaje(modulo);
-
-    if (porcentaje === 100) {
-      return inicio;
-    }
-    if (progreso_actual < inicio) return inicio;
-    return progreso_actual + 1;
-  };
-
-  const getEstadoBoton = (modulo) => {
-    const porcentaje = calcularPorcentaje(modulo);
-    const desbloqueado = estaDesbloqueado(modulo);
-
-    if (!desbloqueado) {
-      return { texto: 'Bloqueado 🔒', disabled: true, clase: 'btn-bloqueado' };
-    }
-    if (porcentaje === 100) {
-      return { texto: '✅ Completado', disabled: false, clase: 'btn-completado' };
-    }
-    const progreso_actual = getProgresoModulo(modulo.moduloId);
-    if (progreso_actual >= modulo.inicio) {
-      return { texto: 'Continuar →', disabled: false, clase: 'btn-continuar' };
-    }
-    return { texto: 'Empezar →', disabled: false, clase: 'btn-empezar' };
-  };
+  const { api, user } = useAuth();
+  const [datos, setDatos] = useState(null);
+  const [error, setError] = useState(false);
+  const [intento, setIntento] = useState(0);
 
   useEffect(() => {
-    const fetchProgreso = async () => {
-      try {
-        const correo = localStorage.getItem("correo");
-        const token = localStorage.getItem("token");
+    const controller = new AbortController();
+    api.get("/api/alumno/progreso", { signal: controller.signal })
+      .then(({ data }) => setDatos(data))
+      .catch(() => { if (!controller.signal.aborted) setError(true); });
+    return () => controller.abort();
+  }, [api, intento]);
 
-        if (!correo || !token) {
-          navigate("/login");
-          return;
-        }
-
-        const resp = await axios.post(
-          `${API_URL}/api/alumno/progreso`,
-          { correo },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        setProgresoData(resp.data);
-      } catch (err) {
-        console.error("Error obteniendo progreso:", err);
-        if (err.response?.status === 401) {
-          navigate("/login");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProgreso();
-  }, [navigate]);
-
-  const irAModulo = (modulo) => {
-    if (!progresoData) return;
-
-    if (!estaDesbloqueado(modulo)) {
-      alert('🔒 Debes completar el módulo anterior primero');
-      return;
-    }
-
-    const destino = obtenerDestinoClick(modulo);
-    navigate(`/modulo/${modulo.moduloId}/contenido/${destino}`);
-  };
-
-  if (loading) {
-    return (
-      <div className="inicio-container">
-        <div className="loading">Cargando tu progreso...</div>
-      </div>
-    );
-  }
-
-  if (!progresoData) {
-    return (
-      <div className="inicio-container">
-        <div className="error">Error al cargar tu progreso</div>
-      </div>
-    );
-  }
-
-  // --- Nombre completo ---
-  const nombreCompleto =
-    (user?.nombre ? `${user.nombre} ${user.apellido || ''}`.trim() : null) ||
-    (progresoData.alumno?.nombre ? `${progresoData.alumno.nombre} ${progresoData.alumno.apellido || ''}`.trim() : null) ||
-    localStorage.getItem('alumno_nombre') ||
-    'Alumno';
-
-  // --- Datos para gráficas ---
-  const datosModulos = MODULOS.map(m => ({
-    name: `M${m.id}`,
-    progreso: calcularPorcentaje(m)
-  }));
-
-  const completados = datosModulos.filter(d => d.progreso === 100).length;
-  const progresoGlobal = Math.round(datosModulos.reduce((a, b) => a + b.progreso, 0) / MODULOS.length);
-  const contenidosVistos = MODULOS.reduce((acc, m) => {
-    const p = getProgresoModulo(m.moduloId);
-    return acc + Math.max(0, Math.min(p, m.fin) - m.inicio + 1);
-  }, 0);
-
-  const pieData = [
-    { name: 'Completado', value: progresoGlobal },
-    { name: 'Restante', value: 100 - progresoGlobal }
-  ];
-  const COLORS = ['#16a34a', '#e5e7eb'];
+  const porId = new Map(datos?.modulos.map(modulo => [modulo.modulo_id, modulo]));
+  const modulos = MODULOS.map((modulo, index) => {
+    const avance = porId.get(modulo.id);
+    const cantidad = Math.min(modulo.fin, avance?.progreso_actual ?? 0);
+    const anterior = MODULOS[index - 1];
+    const disponible = !anterior || cantidad > 0 || datos?.modulos_vista_previa?.includes(modulo.id)
+      || (porId.get(anterior.id)?.progreso_actual ?? 0) >= anterior.fin;
+    return { ...modulo, cantidad, disponible, siguiente: avance?.siguiente_numero ?? 1 };
+  });
+  const completados = modulos.filter(m => m.cantidad === m.fin).length;
+  const vistos = modulos.reduce((total, m) => total + m.cantidad, 0);
+  const porcentaje = Math.round(vistos * 100 / TOTAL_CONTENIDOS);
+  const recomendado = modulos.find(m => m.disponible && m.cantidad < m.fin);
+  const ruta = modulo => `/modulo/${modulo.id}/contenido/${modulo.siguiente}`;
 
   return (
-    <div className="inicio-container">
-      <header className="inicio-header">
-        <div>
-          <h1>Bienvenido, {nombreCompleto}</h1>
-          <p>Continúa con tu aprendizaje de redes sociales</p>
-        </div>
-        <div className="header-badge">
-          {completados}/{MODULOS.length} módulos
-        </div>
+    <div className="panel-alumno">
+      <header className="panel-alumno__portada">
+        <div><p className="panel-alumno__marca">Mi aprendizaje</p><h1>Hola, {user?.nombre || "estudiante"}</h1><p>Explora tus módulos y retoma tus lecciones.</p></div>
+        {datos && recomendado && <Link className="panel-alumno__boton panel-alumno__boton--claro" to={ruta(recomendado)}>Continuar aprendiendo <ArrowRight size={18} aria-hidden="true" /></Link>}
       </header>
-
-      {/* DASHBOARD */}
-      <section className="dashboard-stats">
-        <div className="stat-card stat-chart">
-          <h3>Avance general</h3>
-          <div className="chart-wrap">
-            <ResponsiveContainer width="100%" height={160}>
-              <PieChart>
-                <Pie data={pieData} innerRadius={50} outerRadius={70} dataKey="value" startAngle={90} endAngle={-270}>
-                  {pieData.map((entry, i) => <Cell key={i} fill={COLORS[i]} />)}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="chart-center">{progresoGlobal}%</div>
+      {!datos && (error
+        ? <div className="panel-alumno__tarjeta" role="alert">No pudimos cargar tu avance. <button className="panel-alumno__boton" onClick={() => { setError(false); setIntento(i => i + 1); }}>Reintentar</button></div>
+        : <p role="status">Cargando tu progreso…</p>)}
+      {datos && <>
+        <section className="panel-alumno__resumen" aria-label="Resumen de avance">
+          <article className="panel-alumno__tarjeta"><ChartNoAxesColumn aria-hidden="true" /><h2>Avance general</h2><strong>{porcentaje}%</strong><progress max={100} value={porcentaje} aria-label="Avance general" /></article>
+          <article className="panel-alumno__tarjeta"><GraduationCap aria-hidden="true" /><h2>Módulos completados</h2><strong>{completados} / {modulos.length}</strong></article>
+          <article className="panel-alumno__tarjeta"><BookOpen aria-hidden="true" /><h2>Contenidos completados</h2><strong>{vistos} / {TOTAL_CONTENIDOS}</strong></article>
+        </section>
+        <section aria-labelledby="titulo-modulos">
+          <div className="panel-alumno__seccion"><h2 id="titulo-modulos">Mis módulos</h2><Link to="/contenidos">Ver temario <ArrowRight size={16} aria-hidden="true" /></Link></div>
+          <div className="panel-alumno__modulos">
+            {modulos.map((modulo, i) => {
+              const icono = iconos[i] || BookOpen;
+              const completo = modulo.cantidad === modulo.fin;
+              return (
+                <article className="panel-alumno__tarjeta panel-alumno__modulo" key={modulo.id}>
+                  <div className="panel-alumno__fila"><span className="panel-alumno__icono">{createElement(icono, { size: 22, "aria-hidden": true })}</span><span className="panel-alumno__nota">Módulo {modulo.id}</span></div>
+                  <h3>{modulo.nombre}</h3><p>{modulo.descripcion}</p>
+                  <div className="panel-alumno__avance"><span>{modulo.cantidad} de {modulo.fin} contenidos</span><progress max={modulo.fin} value={modulo.cantidad} aria-label={`Avance en ${modulo.nombre}`} /></div>
+                  {modulo.disponible
+                    ? <Link className="panel-alumno__boton" to={ruta(modulo)}>{completo ? "Repasar" : modulo.cantidad ? "Continuar" : "Empezar"} {completo ? <CheckCircle2 size={17} aria-hidden="true" /> : <ArrowRight size={17} aria-hidden="true" />}</Link>
+                    : <span className="panel-alumno__bloqueo"><LockKeyhole size={16} aria-hidden="true" /> Completa el módulo anterior</span>}
+                </article>
+              );
+            })}
           </div>
-        </div>
-
-        <div className="stat-card stat-chart wide">
-          <h3>Progreso por módulo</h3>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={datosModulos}>
-              <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
-              <YAxis hide domain={[0, 100]} />
-              <Tooltip formatter={(v) => `${v}%`} />
-              <Bar dataKey="progreso" radius={[6, 6, 0, 0]} fill="#166534" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        <div className="stat-card stat-kpi">
-          <span className="kpi-value">{contenidosVistos}/{TOTAL_CONTENIDOS}</span>
-          <span className="kpi-label">Contenidos vistos</span>
-        </div>
-      </section>
-
-      <main className="modulos-grid">
-        {MODULOS.map((modulo) => {
-          const porcentaje = calcularPorcentaje(modulo);
-          const desbloqueado = estaDesbloqueado(modulo);
-          const estadoBoton = getEstadoBoton(modulo);
-
-          return (
-            <article
-              key={modulo.id}
-              className={`modulo-card ${modulo.destacado ? 'destacado' : ''} ${!desbloqueado ? 'bloqueado' : ''}`}
-            >
-              <div className="modulo-header">
-                <h2>Módulo {modulo.id}: {modulo.nombre}</h2>
-                <span className="modulo-icon">{modulo.icono}</span>
-              </div>
-
-              <div className="modulo-body">
-                <p>{modulo.descripcion}</p>
-
-                <div className="progreso-bar">
-                  <div
-                    className="progreso-fill"
-                    style={{ width: `${porcentaje}%` }}
-                  ></div>
-                </div>
-
-                <p className="progreso-texto">
-                  {porcentaje}% completado
-                </p>
-
-                <small style={{ color: '#666', fontSize: '0.85rem' }}>
-                  Contenidos {modulo.inicio} al {modulo.fin}
-                </small>
-              </div>
-
-              <button
-                className={`btn-modulo ${estadoBoton.clase}`}
-                onClick={() => irAModulo(modulo)}
-                disabled={estadoBoton.disabled}
-              >
-                {estadoBoton.texto}
-              </button>
-            </article>
-          );
-        })}
-      </main>
+        </section>
+      </>}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import fbImg from "../../assets/fb.png";
 import fbAlcanceImg from "../../assets/fbAlcance.png";
 import fbMarketImg from "../../assets/fbMarket.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 2; // ✅ Es módulo 2
 const NUM_CONTENIDO = 1;
 

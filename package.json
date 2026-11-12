@@ -1,0 +1,11 @@
+{
+  "name": "comecyt",
+  "private": true,
+  "scripts": {
+    "dev:api": "npm --prefix Comecyt/Backend run dev",
+    "dev:web": "npm --prefix Comecyt/RedesSociales/Comecyt/RedesSociales run dev",
+    "build:web": "npm --prefix Comecyt/RedesSociales/Comecyt/RedesSociales run build",
+    "catalogo:revisar": "npm --prefix Comecyt/Backend run catalogo:revisar",
+    "catalogo:aplicar": "npm --prefix Comecyt/Backend run catalogo:aplicar"
+  }
+}

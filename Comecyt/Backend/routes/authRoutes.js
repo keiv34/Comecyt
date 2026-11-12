@@ -92,7 +92,6 @@ router.post('/registrar', async (req, res) => {
 
 // ✅ LOGIN PRINCIPAL - Busca en usuarios, DOCENTE, ADMINISTRADOR y ALUMNO
 router.post("/login", async (req, res) => {
-    console.log("📦 Body:", req.body);
     const { correo, contraseña } = req.body;
 
     try {

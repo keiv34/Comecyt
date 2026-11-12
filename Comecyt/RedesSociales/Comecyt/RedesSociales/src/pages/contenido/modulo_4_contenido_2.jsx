@@ -15,7 +15,7 @@ import igFotoPerfilImg from "../../assets/igFotoPerfil.png";
 import igEnlacesContactoImg from "../../assets/igEnlacesContacto.png";
 import igPrivacidadImg from "../../assets/igPrivacidad.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 2;
 const TOTAL_PREGUNTAS = 6;
@@ -193,7 +193,7 @@ export default function ContenidoInstagramConfiguracionInicial() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/22"); // ✅ Va al contenido 22
+    navigate("/modulo/4/contenido/1");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

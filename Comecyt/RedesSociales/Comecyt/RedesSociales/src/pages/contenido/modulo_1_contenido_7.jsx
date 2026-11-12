@@ -11,7 +11,7 @@ import notificacionesImg from "../../assets/notificaciones.png";
 import notificaciones2Img from "../../assets/notificaciones2.png";
 import seguridadImg from "../../assets/seguridad.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 7;
 

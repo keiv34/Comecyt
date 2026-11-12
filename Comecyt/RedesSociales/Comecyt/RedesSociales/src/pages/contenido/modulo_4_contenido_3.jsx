@@ -9,7 +9,7 @@ import igFeedPaso1Img from "../../assets/igFeedPaso1.png";
 import igFeedPaso2Img from "../../assets/igFeedPaso2.png";
 import igFeedPaso3Img from "../../assets/igFeedPaso3.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 3;
 const TOTAL_PREGUNTAS = 6;
@@ -187,7 +187,7 @@ export default function ContenidoInstagramFuncionesBasicasFeed() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/23"); // ✅ Va al contenido 23
+    navigate("/modulo/4/contenido/2");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

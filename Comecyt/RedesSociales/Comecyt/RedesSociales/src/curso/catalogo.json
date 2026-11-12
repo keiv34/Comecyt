@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "titulo": "Correo Electrónico",
+    "icono": "📧",
+    "descripcion": "Fundamentos de correo electrónico y comunicación digital",
+    "lecciones": [
+      {
+        "nombre": "Introducción al correo electrónico",
+        "archivo": "modulo_1_contenido_1.jsx"
+      },
+      {
+        "nombre": "Crear correo Electrónico Gmail",
+        "archivo": "modulo_1_contenido_2.jsx"
+      },
+      {
+        "nombre": "Interfaz principal de Gmail",
+        "archivo": "modulo_1_contenido_3.jsx"
+      },
+      {
+        "nombre": "Panel lateral izquierdo",
+        "archivo": "modulo_1_contenido_4.jsx"
+      },
+      {
+        "nombre": "Categorías y etiquetas en Gmail",
+        "archivo": "modulo_1_contenido_5.jsx"
+      },
+      {
+        "nombre": "Barra de herramientas",
+        "archivo": "modulo_1_contenido_6.jsx"
+      },
+      {
+        "nombre": "Configuración y personalización",
+        "archivo": "modulo_1_contenido_7.jsx"
+      },
+      {
+        "nombre": "Examen de correo electrónico",
+        "archivo": "modulo_1_contenido_8_Eval.jsx",
+        "evaluacion": true
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "titulo": "Facebook y Marketplace",
+    "icono": "👥",
+    "descripcion": "Perfiles, páginas, grupos y ventas en Marketplace",
+    "destacado": true,
+    "lecciones": [
+      {
+        "nombre": "Introducción a Facebook",
+        "archivo": "modulo_2_contenido_1.jsx"
+      },
+      {
+        "nombre": "Funciones principales",
+        "archivo": "modulo_2_contenido_2.jsx"
+      },
+      {
+        "nombre": "Páginas, grupos y eventos",
+        "archivo": "modulo_2_contenido_3.jsx"
+      },
+      {
+        "nombre": "Seguridad y configuración",
+        "archivo": "modulo_2_contenido_4.jsx"
+      },
+      {
+        "nombre": "Marketplace y seguridad",
+        "archivo": "modulo_2_contenido_5.jsx"
+      },
+      {
+        "nombre": "Examen de Facebook",
+        "archivo": "modulo_2_contenido_6_Eval.jsx",
+        "evaluacion": true
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "titulo": "WhatsApp y WhatsApp Business",
+    "icono": "📱",
+    "descripcion": "Mensajes, catálogos y atención a clientes",
+    "lecciones": [
+      {
+        "nombre": "Introducción a WhatsApp",
+        "archivo": "modulo_3_contenido_1.jsx"
+      },
+      {
+        "nombre": "Registro y configuración",
+        "archivo": "modulo_3_contenido_2.jsx"
+      },
+      {
+        "nombre": "Llamadas y grupos",
+        "archivo": "modulo_3_contenido_3.jsx"
+      },
+      {
+        "nombre": "Seguridad avanzada",
+        "archivo": "modulo_3_contenido_4.jsx"
+      },
+      {
+        "nombre": "WhatsApp Business: Perfil",
+        "archivo": "modulo_3_contenido_5.jsx"
+      },
+      {
+        "nombre": "Catálogo y estadísticas",
+        "archivo": "modulo_3_contenido_6.jsx"
+      },
+      {
+        "nombre": "Examen de WhatsApp",
+        "archivo": "modulo_3_contenido_7_Eval.jsx",
+        "evaluacion": true
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "titulo": "Instagram",
+    "icono": "📸",
+    "descripcion": "Historias, Reels y publicaciones",
+    "lecciones": [
+      {
+        "nombre": "Introducción a Instagram",
+        "archivo": "modulo_4_contenido_1.jsx"
+      },
+      {
+        "nombre": "Configuración inicial",
+        "archivo": "modulo_4_contenido_2.jsx"
+      },
+      {
+        "nombre": "Publicaciones en el feed",
+        "archivo": "modulo_4_contenido_3.jsx"
+      },
+      {
+        "nombre": "Historias y Reels",
+        "archivo": "modulo_4_contenido_4.jsx"
+      },
+      {
+        "nombre": "Herramientas de descubrimiento",
+        "archivo": "modulo_4_contenido_5.jsx"
+      },
+      {
+        "nombre": "Instagram para negocios",
+        "archivo": "modulo_4_contenido_6.jsx"
+      },
+      {
+        "nombre": "Buenas prácticas",
+        "archivo": "modulo_4_contenido_7.jsx"
+      },
+      {
+        "nombre": "Examen de Instagram",
+        "archivo": "modulo_4_contenido_8_Eval.jsx",
+        "evaluacion": true
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "titulo": "Retos Educaplay",
+    "icono": "🎮",
+    "descripcion": "Actividades prácticas y cierre del curso",
+    "lecciones": [
+      {
+        "nombre": "Reto: Sopa de letras digital",
+        "archivo": "modulo_5_contenido_1.jsx"
+      },
+      {
+        "nombre": "Reto: Crucigrama de redes sociales",
+        "archivo": "modulo_5_contenido_2.jsx"
+      },
+      {
+        "nombre": "Reto final: Memorama tecnológico",
+        "archivo": "modulo_5_contenido_3.jsx"
+      },
+      {
+        "nombre": "Reto: Correo Electrónico Experto",
+        "archivo": "modulo_5_contenido_4.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - WhatsApp Business",
+        "archivo": "modulo_5_contenido_5.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Llamadas Telefónicas",
+        "archivo": "modulo_5_contenido_6.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - SMS/Smishing",
+        "archivo": "modulo_5_contenido_7.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Extorsión Telefónica",
+        "archivo": "modulo_5_contenido_8.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Premios Falsos",
+        "archivo": "modulo_5_contenido_9.jsx"
+      },
+      {
+        "nombre": "Reto: Crucigrama - Ciberseguridad",
+        "archivo": "modulo_5_contenido_10.jsx"
+      },
+      {
+        "nombre": "Reto final: Memorama Tecnológico 2",
+        "archivo": "modulo_5_contenido_11.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa de letras - Seguridad Avanzada",
+        "archivo": "modulo_5_contenido_12.jsx"
+      },
+      {
+        "nombre": "Reto: Simulador Telefónico - Anti-Vishing",
+        "archivo": "modulo_5_contenido_13.jsx"
+      },
+      {
+        "nombre": "Reto: Blindaje de Cuenta - WhatsApp Seguro",
+        "archivo": "modulo_5_contenido_14.jsx"
+      },
+      {
+        "nombre": "Reto final: Reclutamiento Seguro - Anti-JobScams",
+        "archivo": "modulo_5_contenido_15.jsx"
+      },
+      {
+        "nombre": "Cierre del curso",
+        "archivo": "modulo_5_contenido_16.jsx"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "titulo": "Cobros Digitales y Finanzas",
+    "icono": "💳",
+    "descripcion": "Pagos digitales y finanzas personales",
+    "lecciones": [
+      {
+        "nombre": "Introducción a los Cobros Digitales y SPEI",
+        "archivo": "modulo_6_contenido_1.jsx"
+      },
+      {
+        "nombre": "Métodos y Plataformas de Pago Digitales",
+        "archivo": "modulo_6_contenido_2.jsx"
+      },
+      {
+        "nombre": "Envíos de Dinero, Links de Cobro y Códigos QR",
+        "archivo": "modulo_6_contenido_3.jsx"
+      },
+      {
+        "nombre": "Compras Seguras en Línea y Prevención de Fraudes",
+        "archivo": "modulo_6_contenido_4.jsx"
+      },
+      {
+        "nombre": "Gestión y Control de Finanzas Personales",
+        "archivo": "modulo_6_contenido_5.jsx"
+      },
+      {
+        "nombre": "Examen de Cobros Digitales",
+        "archivo": "modulo_6_contenido_6_Eval.jsx",
+        "evaluacion": true
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "titulo": "Seguridad digital y prevención de fraudes",
+    "icono": "🛡️",
+    "descripcion": "Identifica amenazas, protege tus datos y responde ante fraudes digitales.",
+    "lecciones": [
+      {
+        "nombre": "Fundamentos de seguridad digital",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Amenazas y riesgos en internet",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Identificación y prevención de fraudes",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Protección de datos personales y financieros",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Seguridad en dispositivos y redes",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Respuesta ante incidentes digitales",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Evaluación final de seguridad digital",
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "titulo": "Google Drive y trabajo colaborativo",
+    "icono": "📁",
+    "descripcion": "Organiza archivos, comparte documentos y trabaja con tu equipo en Google Meet.",
+    "lecciones": [
+      {
+        "nombre": "Organización de archivos en Google Drive",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Documentos compartidos y colaboración",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Videollamadas con Google Meet",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Evaluación final · Google Drive y trabajo colaborativo",
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "titulo": "LinkedIn",
+    "icono": "💼",
+    "descripcion": "Crea tu perfil profesional, establece contactos y busca empleo con criterio.",
+    "lecciones": [
+      {
+        "nombre": "Perfil profesional en LinkedIn",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Contactos y mensajes profesionales",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Búsqueda de empleo y postulaciones",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Evaluación final · LinkedIn",
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "titulo": "Aplicaciones de transporte y entrega",
+    "icono": "🚗",
+    "descripcion": "Solicita viajes y pedidos con DiDi, Uber y Rappi, y aprende a verificar el servicio.",
+    "lecciones": [
+      {
+        "nombre": "Solicitar un viaje con DiDi y Uber",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Viajar con seguridad y reportar incidentes",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Pedir comida y recibir entregas con Rappi",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Evaluación final · Aplicaciones de transporte y entrega",
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "titulo": "ChatGPT y Gemini",
+    "icono": "💬",
+    "descripcion": "Aprende a formular instrucciones, revisar respuestas y proteger tus datos al usar asistentes de IA.",
+    "lecciones": [
+      {
+        "nombre": "Primeros pasos con ChatGPT y Gemini",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Cómo escribir instrucciones útiles",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Verificación de respuestas y privacidad",
+        "archivo": "leccionGuiada.jsx"
+      },
+      {
+        "nombre": "Evaluación final · ChatGPT y Gemini",
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
+      }
+    ]
+  }
+]

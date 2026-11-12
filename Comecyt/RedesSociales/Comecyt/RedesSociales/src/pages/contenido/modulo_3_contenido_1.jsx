@@ -9,7 +9,7 @@ import whatsappWorldImg from "../../assets/whatsappWorld.png";
 import whatsappPersonalBusinessImg from "../../assets/whatsappPersonalBusiness.png";
 import whatsappSecurityImg from "../../assets/whatsappSecurity.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 1;
 
@@ -195,7 +195,7 @@ export default function ContenidoWhatsappIntroduccion() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/2/contenido/14"); // ✅ Viene del último contenido del módulo 2
+    navigate("/modulo/2/contenido/6");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "catalogo:revisar": "node scripts/sincronizarCatalogo.js",
+    "catalogo:aplicar": "node scripts/sincronizarCatalogo.js --aplicar"
   },
   "keywords": [],
   "author": "",

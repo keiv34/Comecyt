@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "@/Css/modulo_3_contenido_7_Eval.css";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 1 - Examen final del módulo 1
 const NUM_CONTENIDO = 7;
 const EVALUACION_ID = 3; // Examen final Módulo 1
@@ -166,7 +166,7 @@ export default function ContenidoWhatsappExamenFinal() {
       if (!correo) return;
 
       const { data } = await axios.post(
-        `${API_URL}/api/alumno/evaluacion/guardar`,
+        `${API_URL}/api/alumno/evaluacion/resultado`,
         { correo, evaluacion_id: EVALUACION_ID, puntaje: score }
       );
 
@@ -203,7 +203,7 @@ export default function ContenidoWhatsappExamenFinal() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/20"); // ✅ Va al contenido 20
+    navigate("/modulo/3/contenido/6");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido
@@ -225,7 +225,7 @@ export default function ContenidoWhatsappExamenFinal() {
       showToast("No se pudo reiniciar.", "error");
     }
 
-    navigate("/modulo/1/contenido/17"); // Regresa a WhatsApp Business
+    navigate("/modulo/3/contenido/3");
   };
 
   const puntajePorcentaje = (quizScore / TOTAL_PREGUNTAS) * 100;
@@ -268,7 +268,7 @@ export default function ContenidoWhatsappExamenFinal() {
         if (NUM_CONTENIDO >= totalContenidos) {
           navigate("/inicio");
         } else {
-          navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
+          navigate("/temario");
         }
       } else {
         setToast('Error al guardar progreso. Intenta de nuevo.');

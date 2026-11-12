@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 // ========= REGISTRO ADMINISTRADOR =========
 export const crearAdminRegistro = async (req, res) => {
   console.log('📝 [ADMIN] 1. Entró al endpoint /api/admin/registrar');
-  console.log('📝 [ADMIN] 2. Body recibido:', req.body);
 
   try {
     const { nombre, apellido, correo, contraseña } = req.body;
@@ -80,7 +79,6 @@ export const crearAdminRegistro = async (req, res) => {
 // ========= REGISTRO DOCENTE =========
 export const crearDocenteAdmin = async (req, res) => {
   console.log('📝 [DOCENTE] 1. Entró al endpoint /api/admin/docentes');
-  console.log('📝 [DOCENTE] 2. Body recibido:', req.body);
 
   try {
     const { nombre, apellido, correo, contraseña } = req.body;

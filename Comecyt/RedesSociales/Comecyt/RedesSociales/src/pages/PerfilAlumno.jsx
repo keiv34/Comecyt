@@ -1,361 +1,181 @@
-// src/pages/PerfilAlumno.jsx
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import ProfileCard from "../Components/common/ProfileCard";
-import { Camera, LogOut, FileText, Download, Eye, ShieldCheck, User } from "lucide-react";
-import "../Css/PerfilAlumno.css";
+import { BookOpen, Camera, Download, FileText, GraduationCap, LogOut, Pencil } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { PREFIJO_AVATAR } from "../context/limpiarSesion";
+import AvatarAlumno from "../Components/common/AvatarAlumno";
+import { MODULOS, TOTAL_CONTENIDOS } from "../curso/catalogo";
+import "../Css/PanelAlumno.css";
 
-const API_URL = 'http://localhost:4000';
+const AVATARES = { neutro: "Iniciales", hombre: "Hombre", mujer: "Mujer" };
+const formatosFoto = ["image/jpeg", "image/png", "image/webp"];
+
+function leerAvatar(clave) {
+  try {
+    return JSON.parse(localStorage.getItem(clave)) ?? { tipo: "neutro" };
+  } catch {
+    return { tipo: "neutro" };
+  }
+}
 
 export default function PerfilAlumno() {
+  const { api, user, logout, actualizarUsuario } = useAuth();
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  const nombreRef = useRef(null);
-  const apellidoRef = useRef(null);
+  const [datos, setDatos] = useState(null);
+  const [certificados, setCertificados] = useState(null);
+  const [progreso, setProgreso] = useState(null);
+  const [error, setError] = useState(false);
+  const [editando, setEditando] = useState(false);
+  const [ocupado, setOcupado] = useState(false);
+  const [generando, setGenerando] = useState(false);
+  const [mensaje, setMensaje] = useState(null);
+  const clave = PREFIJO_AVATAR + user?.correo;
+  const [avatar, setAvatar] = useState(() => leerAvatar(clave));
 
-  const [alumno, setAlumno] = useState(null);
-  const [certificados, setCertificados] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [selectedCert, setSelectedCert] = useState(null);
-  const [versionFoto, setVersionFoto] = useState(Date.now());
-  const [vistaInterna, setVistaInterna] = useState("info");
-  const [generandoCert, setGenerandoCert] = useState(false);
+  useEffect(() => {
+    if (!user?.correo) return;
+    const controller = new AbortController();
+    const options = { signal: controller.signal };
+    const body = { correo: user.correo };
+    api.post("/api/alumno/datos", body, options).then(({ data }) => setDatos(data.alumno))
+      .catch(() => { if (!controller.signal.aborted) setError(true); });
+    api.post("/api/alumno/certificados", body, options).then(({ data }) => setCertificados(data.certificados || []))
+      .catch(() => { if (!controller.signal.aborted) setCertificados(false); });
+    api.get("/api/alumno/progreso", options).then(({ data }) => setProgreso(data.modulos))
+      .catch(() => { if (!controller.signal.aborted) setProgreso(false); });
+    return () => controller.abort();
+  }, [api, user?.correo]);
 
-  // ✅ CONFIGURACIÓN: Cada módulo con su moduloId real de la BD
-  const MODULOS = [
-    { id: 1, moduloId: 1, nombre: "Correo Electrónico", icono: "📧", inicio: 1, fin: 8 },
-    { id: 2, moduloId: 2, nombre: "Facebook & Marketplace", icono: "📘", inicio: 1, fin: 6 },
-    { id: 3, moduloId: 3, nombre: "WhatsApp Business", icono: "💬", inicio: 1, fin: 7 },
-    { id: 4, moduloId: 4, nombre: "Instagram", icono: "📸", inicio: 1, fin: 8 },
-    { id: 5, moduloId: 5, nombre: "Retos Finales", icono: "🏆", inicio: 1, fin: 3 }
-  ];
-
-  const TOTAL_CONTENIDOS = MODULOS.reduce((acc, m) => acc + (m.fin - m.inicio + 1), 0); // 8+6+7+8+3 = 32
-
-  const [stats, setStats] = useState({
-    modulos_completados: 0,
-    total_modulos: 5,
-    contenidos_completados: 0,
-    total_contenidos: 32,
-    examenes_aprobados: 0,
-    total_examenes: 5,
-    porcentaje_general: 0
-  });
-
-  const [toast, setToast] = useState({ visible: false, message: "", type: "info" });
-
-  const showToast = (message, type = "info") => {
-    setToast({ visible: true, message, type });
-    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 2500);
-  };
-
-  // ✅ Obtiene el progreso del módulo correcto
-  const getProgresoModulo = (modulosData, moduloId) => {
-    if (!modulosData) return 0;
-    const mod = modulosData.find(m => m.modulo_id === moduloId);
-    return mod?.progreso_actual || 0;
-  };
-
-  // ✅ Cuenta módulos completados correctamente
-  const getModulosCompletados = (modulosData) => {
-    return MODULOS.filter(m => {
-      const progreso = getProgresoModulo(modulosData, m.moduloId);
-      return progreso >= m.fin;
-    }).length;
-  };
-
-  // ✅ Cuenta exámenes aprobados = módulos completados
-  const getExamenesAprobados = (modulosData) => {
-    return getModulosCompletados(modulosData);
-  };
-
-  // ✅ Suma todos los contenidos completados de todos los módulos
-  const getTotalContenidosCompletados = (modulosData) => {
-    return MODULOS.reduce((acc, m) => {
-      const progreso = getProgresoModulo(modulosData, m.moduloId);
-      // Si no ha empezado, 0. Si ya pasó el fin, cuenta todo el módulo
-      if (progreso < m.inicio) return acc;
-      if (progreso >= m.fin) return acc + (m.fin - m.inicio + 1);
-      // Si está en medio, cuenta los completados
-      return acc + (progreso - m.inicio + 1);
-    }, 0);
-  };
-
-  // ✅ USA TU BACKEND PARA GENERAR EL CERTIFICADO
-  const generarCertificadoPDF = async () => {
-    if (!alumno) return;
-
-    setGenerandoCert(true);
+  function elegirAvatar(nuevo) {
     try {
-      const response = await axios.post(
-        `${API_URL}/api/certificados/generar`,
-        {
-          alumno_id: alumno.alumno_id,
-          nombre: alumno.nombre,
-          apellido: alumno.apellido,
-          correo: alumno.correo
-        },
-        { responseType: 'blob' }
-      );
-
-      // Descarga el PDF que te regresa el backend
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `Certificado_AGORA_${alumno.nombre}_${alumno.apellido}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      showToast("Certificado descargado ✨", "success");
-      fetchData(); // Recarga para mostrar el nuevo certificado en la lista
-    } catch (err) {
-      console.error("Error al generar certificado:", err);
-      showToast("Error al generar certificado", "error");
-    } finally {
-      setGenerandoCert(false);
+      localStorage.setItem(clave, JSON.stringify(nuevo));
+      setAvatar(nuevo);
+      setMensaje(null);
+    } catch {
+      setMensaje({ error: true, texto: "No pudimos guardar el avatar en este navegador." });
     }
-  };
+  }
 
-  const fetchData = useCallback(async () => {
-    const correo = localStorage.getItem("correo");
-    if (!correo) return navigate("/login");
-    try {
-      const resAlumno = await axios.post(`${API_URL}/api/alumno/datos`, { correo });
-      setAlumno(resAlumno.data.alumno);
-
-      const resCertificados = await axios.post(`${API_URL}/api/alumno/certificados`, { correo });
-      setCertificados(resCertificados.data.certificados || []);
-
-      const resProgreso = await axios.post(`${API_URL}/api/alumno/progreso`, { correo });
-      const modulosData = resProgreso.data.modulos || [];
-
-      // ✅ Calcula stats con todos los módulos
-      const contenidosCompletados = getTotalContenidosCompletados(modulosData);
-      const modulosCompletados = getModulosCompletados(modulosData);
-
-      setStats({
-        modulos_completados: modulosCompletados,
-        total_modulos: 5,
-        contenidos_completados: contenidosCompletados,
-        total_contenidos: TOTAL_CONTENIDOS,
-        examenes_aprobados: getExamenesAprobados(modulosData),
-        total_examenes: 5,
-        porcentaje_general: Math.round((contenidosCompletados / TOTAL_CONTENIDOS) * 100)
-      });
-    } catch (err) {
-      console.error("Error al sincronizar:", err);
-    }
-  }, [navigate]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
-
-  const handleGuardarDatos = async () => {
-    const nuevoNombre = nombreRef.current.value.trim();
-    const nuevoApellido = apellidoRef.current.value.trim();
-
-    if (!nuevoNombre || !nuevoApellido) {
-      showToast("Nombre y apellido obligatorios", "error");
+  function elegirFoto(evento) {
+    const archivo = evento.target.files?.[0];
+    evento.target.value = "";
+    if (!archivo) return;
+    if (!formatosFoto.includes(archivo.type) || archivo.size > 512 * 1024) {
+      setMensaje({ error: true, texto: "Elige una imagen JPG, PNG o WebP de hasta 512 KB." });
       return;
     }
+    const lector = new FileReader();
+    lector.onload = () => elegirAvatar({ tipo: "foto", src: lector.result });
+    lector.onerror = () => setMensaje({ error: true, texto: "No pudimos leer la foto." });
+    lector.readAsDataURL(archivo);
+  }
 
-    setAlumno(prev => ({
-      ...prev,
-      nombre: nuevoNombre,
-      apellido: nuevoApellido
-    }));
-
-    try {
-      await axios.post(`${API_URL}/api/alumno/actualizar`, {
-        alumno_id: alumno.alumno_id,
-        nombre: nuevoNombre,
-        apellido: nuevoApellido
-      });
-
-      showToast("Datos actualizados correctamente ✨", "success");
-      setVistaInterna("info");
-    } catch (err) {
-      console.error("Error:", err);
-      showToast("Error de conexión", "error");
+  async function guardar(evento) {
+    evento.preventDefault();
+    const campos = new FormData(evento.currentTarget);
+    const nombre = campos.get("nombre").trim();
+    const apellido = campos.get("apellido").trim();
+    if (!nombre) {
+      setMensaje({ error: true, texto: "Escribe tu nombre." });
+      return;
     }
-  };
-
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('avatar', file);
-    formData.append('alumno_id', alumno.alumno_id);
-
+    setOcupado(true);
+    setMensaje(null);
     try {
-      setUploading(true);
-      const res = await axios.post(`${API_URL}/api/alumno/avatar`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setAlumno(prev => ({ ...prev, avatar: res.data.avatar }));
-      setVersionFoto(Date.now());
-      showToast("Foto actualizada ✨", "success");
-    } catch (err) {
-      showToast("Error al subir imagen", "error");
+      await api.post("/api/alumno/actualizar", { alumno_id: datos.alumno_id, nombre, apellido });
+      setDatos(anterior => ({ ...anterior, nombre, apellido }));
+      actualizarUsuario({ nombre, apellido });
+      setEditando(false);
+      setMensaje({ texto: "Tus datos se actualizaron." });
+    } catch {
+      setMensaje({ error: true, texto: "No pudimos guardar tus datos. Intenta de nuevo." });
     } finally {
-      setUploading(false);
+      setOcupado(false);
     }
-  };
+  }
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+  async function descargarCertificado() {
+    setGenerando(true);
+    setMensaje(null);
+    try {
+      const { data } = await api.post("/api/certificados/generar", {
+        alumno_id: datos.alumno_id, nombre: datos.nombre, apellido: datos.apellido, correo: datos.correo
+      }, { responseType: "blob" });
+      const url = URL.createObjectURL(data);
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = "Certificado_AGORA.pdf";
+      enlace.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      setMensaje({ error: true, texto: "No pudimos descargar el certificado." });
+    } finally {
+      setGenerando(false);
+    }
+  }
 
-  if (!alumno) return <div className="perfil-loading"><div className="spinner"></div></div>;
-
-  const avatarUrl = alumno.avatar
-    ? (alumno.avatar.startsWith('http') ? alumno.avatar : `${API_URL}${alumno.avatar}?v=${versionFoto}`)
-    : "https://i.pravatar.cc/300";
-
-  const cursoCompleto = stats.contenidos_completados >= TOTAL_CONTENIDOS;
+  if (!datos) return <div className="panel-alumno"><p role={error ? "alert" : "status"}>{error ? "No pudimos cargar tu perfil." : "Cargando tu perfil…"}</p></div>;
+  const nombre = [datos.nombre, datos.apellido].filter(Boolean).join(" ");
+  const avances = new Map((progreso || []).map(item => [item.modulo_id, item.progreso_actual]));
+  const completados = MODULOS.filter(item => (avances.get(item.id) ?? 0) >= item.fin).length;
+  const vistos = MODULOS.reduce((total, item) => total + Math.min(item.fin, avances.get(item.id) ?? 0), 0);
 
   return (
-    <div className="perfil-root">
-      {toast.visible && <div className={`toast toast-${toast.type}`}>{toast.message}</div>}
-
-      <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" style={{ display: 'none' }} />
-
-      <div className="perfil-card-3d-wrapper">
-        <div className="relative">
-          {uploading && <div className="upload-overlay"><div className="spinner"></div></div>}
-          <ProfileCard
-            name={`${alumno.nombre} ${alumno.apellido}`}
-            title="Estudiante ÁGORA"
-            handle={alumno.correo.split("@")[0]}
-            status="Online"
-            avatarUrl={avatarUrl}
-            onAvatarClick={() => fileInputRef.current?.click()}
-            behindGlowEnabled
-            innerGradient="linear-gradient(145deg,#1a1a1a 0%,#00ffcc44 100%)"
-          />
-          <button onClick={() => fileInputRef.current?.click()} className="btn-cambiar-foto">
-            <Camera size={18} /> Cambiar foto
-          </button>
+    <div className="panel-alumno">
+      <header className="panel-alumno__portada">
+        <div className="panel-alumno__identidad">
+          {avatar.tipo === "foto" ? <img className="panel-alumno__avatar" src={avatar.src} alt={`Foto de ${nombre}`} /> : <AvatarAlumno tipo={avatar.tipo} nombre={nombre} />}
+          <div><p className="panel-alumno__marca">Mi perfil</p><h1>{nombre}</h1><p>Estudiante ÁGORA</p></div>
         </div>
-      </div>
-
-      <div className="perfil-stats-grid">
-        <div className="stat-card">
-          <h3>Módulos</h3>
-          <p>{stats.modulos_completados} / {stats.total_modulos}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Contenidos</h3>
-          <p>{stats.contenidos_completados} / {stats.total_contenidos}</p>
-        </div>
-        <div className="stat-card stat-card-main">
-          <h3>Progreso</h3>
-          <p>{stats.porcentaje_general}%</p>
-        </div>
-      </div>
-
-      <div className="perfil-card">
-        <div className="perfil-card-header">
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <User size={24} /> {vistaInterna === "info" ? "Perfil" : vistaInterna === "editar" ? "Editar Datos" : "Seguridad"}
-          </h2>
-          <button className="btn-logout" onClick={handleLogout}><LogOut size={16} /> Salir</button>
-        </div>
-
-        <div className="perfil-info">
-          {vistaInterna === "info" && (
-            <>
-              <p><strong>Nombre:</strong> {alumno.nombre} {alumno.apellido}</p>
-              <p><strong>Correo:</strong> {alumno.correo}</p>
-              <div className="perfil-actions">
-                <button className="btn-actualizar" onClick={() => setVistaInterna("editar")}>✏️ Editar Datos</button>
-                <button className="btn-password" onClick={() => setVistaInterna("seguridad")}>🔐 Seguridad</button>
-              </div>
-            </>
-          )}
-
-          {vistaInterna === "editar" && (
-            <div className="form-container-pro">
-              <div className="input-group">
-                <label>Nombre(s):</label>
-                <input className="input-pro" type="text" ref={nombreRef} defaultValue={alumno.nombre} />
-              </div>
-              <div className="input-group">
-                <label>Apellidos:</label>
-                <input className="input-pro" type="text" ref={apellidoRef} defaultValue={alumno.apellido} />
-              </div>
-              <div className="perfil-actions">
-                <button className="btn-actualizar" onClick={handleGuardarDatos}>Guardar</button>
-                <button className="btn-logout" style={{ background: '#666' }} onClick={() => setVistaInterna("info")}>Cancelar</button>
-              </div>
+        <button className="panel-alumno__boton panel-alumno__boton--claro" onClick={() => { logout(); navigate("/login", { replace: true }); }}><LogOut size={18} aria-hidden="true" /> Cerrar sesión</button>
+      </header>
+      {mensaje && <p className={`panel-alumno__mensaje${mensaje.error ? " panel-alumno__mensaje--error" : ""}`} role={mensaje.error ? "alert" : "status"}>{mensaje.texto}</p>}
+      <section className="panel-alumno__tarjeta" aria-labelledby="datos-perfil">
+        <h2 id="datos-perfil">Datos personales</h2>
+        {editando ? (
+          <form className="panel-alumno__formulario" onSubmit={guardar}>
+            <label>Nombre<input name="nombre" autoComplete="given-name" defaultValue={datos.nombre} required /></label>
+            <label>Apellidos<input name="apellido" autoComplete="family-name" defaultValue={datos.apellido} /></label>
+            <div className="panel-alumno__fila">
+              <button className="panel-alumno__boton" disabled={ocupado}>{ocupado ? "Guardando…" : "Guardar cambios"}</button>
+              <button type="button" className="panel-alumno__boton panel-alumno__boton--secundario" disabled={ocupado} onClick={() => setEditando(false)}>Cancelar</button>
             </div>
-          )}
-
-          {vistaInterna === "seguridad" && (
-            <div className="form-container-pro">
-              <input className="input-pro" type="password" placeholder="Nueva contraseña" />
-              <input className="input-pro" type="password" placeholder="Confirmar contraseña" />
-              <div className="perfil-actions">
-                <button className="btn-password" onClick={() => { showToast("Seguridad actualizada"); setVistaInterna("info"); }}>Actualizar</button>
-                <button className="btn-logout" style={{ background: '#666' }} onClick={() => setVistaInterna("info")}>Volver</button>
-              </div>
-            </div>
-          )}
+          </form>
+        ) : <>
+          <dl className="panel-alumno__datos">
+            <div><dt>Nombre</dt><dd>{datos.nombre}</dd></div>
+            <div><dt>Apellidos</dt><dd>{datos.apellido || "Sin registrar"}</dd></div>
+            <div><dt>Correo electrónico</dt><dd>{datos.correo}</dd></div>
+          </dl>
+          <button className="panel-alumno__boton panel-alumno__boton--secundario" onClick={() => { setMensaje(null); setEditando(true); }}><Pencil size={17} aria-hidden="true" /> Editar datos</button>
+        </>}
+      </section>
+      <section className="panel-alumno__tarjeta" aria-labelledby="avatar-perfil">
+        <h2 id="avatar-perfil">Imagen de perfil</h2>
+        <div className="panel-alumno__formulario">
+          <label>Avatar<select value={avatar.tipo} onChange={evento => elegirAvatar({ tipo: evento.target.value })}>
+            {Object.entries(AVATARES).map(([tipo, etiqueta]) => <option key={tipo} value={tipo}>{etiqueta}</option>)}
+            {avatar.tipo === "foto" && <option value="foto">Foto personalizada</option>}
+          </select></label>
+          <label><span className="panel-alumno__fila"><Camera size={17} aria-hidden="true" /> Usar una foto en este navegador</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={elegirFoto} /></label>
         </div>
-      </div>
-
-      <div className="perfil-certificados">
-        <h3>🎓 Certificados</h3>
-        {cursoCompleto ? (
-          <div className="certificado-disponible">
-            <div className="certificado-icon">🎓</div>
-            <div className="certificado-info">
-              <h3>¡Felicidades! Completaste todos los módulos</h3>
-              <p>Ya puedes descargar tu certificado de finalización</p>
-            </div>
-            <button
-              className="btn-pdf"
-              onClick={generarCertificadoPDF}
-              disabled={generandoCert}
-            >
-              <Download size={18} /> {generandoCert ? 'Generando...' : 'PDF'}
-            </button>
-          </div>
-        ) : (
-          <div className="certificado-bloqueado">
-            <div className="certificado-icon">🔒</div>
-            <div className="certificado-info">
-              <h3>Completa tus estudios para obtener tu certificado</h3>
-              <p>Te faltan {TOTAL_CONTENIDOS - stats.contenidos_completados} contenidos por completar</p>
-              <div className="barra-progreso-cert">
-                <div
-                  className="barra-fill-cert"
-                  style={{ width: `${stats.porcentaje_general}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {certificados.length > 0 && (
-          <div className="cert-list" style={{ marginTop: '20px' }}>
-            {certificados.map((c) => (
-              <div key={c.certificado_id} className="cert-item">
-                <div className="cert-info">
-                  <FileText size={20} />
-                  <span>{c.titulo_modulo}</span>
-                </div>
-                <div className="cert-buttons">
-                  <button className="btn-ver" onClick={() => setSelectedCert(c)}><Eye size={16} /> Ver</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      </section>
+      <section className="panel-alumno__tarjeta" aria-labelledby="avance-perfil">
+        <h2 id="avance-perfil" className="panel-alumno__fila"><BookOpen size={21} aria-hidden="true" /> Avance académico</h2>
+        {progreso ? <dl className="panel-alumno__datos"><div><dt>Módulos completados</dt><dd>{completados} de {MODULOS.length}</dd></div><div><dt>Contenidos completados</dt><dd>{vistos} de {TOTAL_CONTENIDOS}</dd></div></dl>
+          : <p role="status">{progreso === false ? "No pudimos consultar tu avance." : "Cargando avance…"}</p>}
+      </section>
+      <section className="panel-alumno__tarjeta" aria-labelledby="certificados-perfil">
+        <h2 id="certificados-perfil" className="panel-alumno__fila"><GraduationCap size={21} aria-hidden="true" /> Certificados</h2>
+        {progreso && vistos === TOTAL_CONTENIDOS
+          ? <button className="panel-alumno__boton" onClick={descargarCertificado} disabled={generando}><Download size={17} aria-hidden="true" /> {generando ? "Generando…" : "Descargar certificado"}</button>
+          : progreso && <p>Completa los {TOTAL_CONTENIDOS - vistos} contenidos restantes para obtener tu certificado.</p>}
+        {certificados === false && <p role="status">No pudimos consultar tus certificados.</p>}
+        {certificados?.length > 0 && <ul className="panel-alumno__certificados">{certificados.map(certificado => (
+          <li key={certificado.certificado_id}><span className="panel-alumno__fila"><FileText size={17} aria-hidden="true" /> {certificado.titulo_modulo}</span>
+            {certificado.fecha_emision && <span>{new Date(certificado.fecha_emision).toLocaleDateString("es-MX")}</span>}</li>
+        ))}</ul>}
+      </section>
     </div>
   );
 }

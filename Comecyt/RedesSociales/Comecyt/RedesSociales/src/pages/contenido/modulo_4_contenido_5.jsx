@@ -13,7 +13,7 @@ import igRecomendPaso2 from "../../assets/igRecomendPaso2.png";
 import igInteraccionPaso1 from "../../assets/igInteraccionPaso1.png";
 import igInteraccionPaso2 from "../../assets/igInteraccionPaso2.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 5;
 const TOTAL_PREGUNTAS = 6;
@@ -191,7 +191,7 @@ export default function ContenidoInstagramBusquedaDescubrimiento() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/25"); // ✅ Va al contenido 25
+    navigate("/modulo/4/contenido/4");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

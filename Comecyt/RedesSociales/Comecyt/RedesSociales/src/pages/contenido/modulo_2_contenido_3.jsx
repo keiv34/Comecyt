@@ -8,7 +8,7 @@ import "../../Css/modulo_2_contenido_3.css";
 import paginasImg from "../../assets/paginas_fb.png";
 import eventosImg from "../../assets/eventos_fb.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 2;
 const NUM_CONTENIDO = 3;
 

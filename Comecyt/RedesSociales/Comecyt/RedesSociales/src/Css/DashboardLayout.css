@@ -126,7 +126,7 @@
     /* Texto negro por defecto */
 }
 
-.dashboard-content * {
+:where(.dashboard-content *) {
     color: inherit;
     /* Hereda el negro, no el blanco del header */
 }
@@ -140,4 +140,29 @@
     .user-email {
         display: none;
     }
+}
+.dashboard-layout .nav-item, .dashboard-layout .whatsapp-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.dashboard-layout .whatsapp-btn svg { vertical-align: middle; }
+.dashboard-logout {
+    display: grid;
+    place-items: center;
+    min-width: 42px;
+    min-height: 42px;
+    border: 1px solid #ffffff80;
+    border-radius: 8px;
+    color: #fff;
+    background: transparent;
+    cursor: pointer;
+}
+.dashboard-layout .dashboard-content { min-width: 0; }
+@media (max-width: 700px) {
+    .dashboard-layout .dashboard-body { flex-direction: column; }
+    .dashboard-layout .dashboard-sidebar { width: 100%; padding: 6px 0; }
+    .dashboard-layout .sidebar-nav { flex-direction: row; overflow-x: auto; padding: 0 10px; }
+    .dashboard-layout .nav-item { white-space: nowrap; padding: 10px 8px; }
+    .dashboard-layout .sidebar-whatsapp { display: none; }
 }

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_4_contenido_8_Eval.css";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4;
 const NUM_CONTENIDO = 8;
 const EVALUACION_ID = 4;
@@ -212,7 +212,7 @@ export default function ExamenInstagramModulo4() {
     try {
       const correo = localStorage.getItem("correo");
       const { data } = await axios.post(
-        `${API_URL}/api/alumno/evaluacion/guardar`,
+        `${API_URL}/api/alumno/evaluacion/resultado`,
         {
           correo,
           evaluacion_id: EVALUACION_ID,
@@ -241,7 +241,7 @@ export default function ExamenInstagramModulo4() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/28"); // ✅ Va al contenido 28
+    navigate("/modulo/4/contenido/7");
   };
 
   // ✅ CAMBIO 3: Función generarCertificado con guard y states
@@ -295,7 +295,7 @@ export default function ExamenInstagramModulo4() {
 
 
   const finalizarContenido = async () => {
-    if (!puedeAvanzar) return;
+    if (!aprobado) return;
     setGuardando(true);
     const correo = localStorage.getItem("correo");
     const token = localStorage.getItem("token");
@@ -313,16 +313,14 @@ export default function ExamenInstagramModulo4() {
         if (NUM_CONTENIDO >= totalContenidos) {
           navigate("/inicio");
         } else {
-          navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
+          navigate("/temario");
         }
       } else {
-        setToast('Error al guardar progreso. Intenta de nuevo.');
-        setTimeout(() => setToast(""), 3000);
+        showToast("No se pudo guardar tu avance. Intenta de nuevo.", "error");
       }
     } catch (err) {
       console.error("❌ Error al guardar:", err.response?.data || err);
-      setToast('Error de conexión al guardar progreso');
-      setTimeout(() => setToast(""), 3000);
+      showToast("Error de conexión al guardar el progreso.", "error");
     } finally {
       setGuardando(false);
     }
@@ -676,7 +674,7 @@ export default function ExamenInstagramModulo4() {
           <button
             className={`btn-siguiente ${!aprobado || guardando ? "btn-siguiente-locked" : ""}`}
             onClick={finalizarContenido}
-            disabled={guardando || !puedeAvanzar}
+            disabled={guardando || !aprobado}
           >
             {guardando ? "Guardando..." : aprobado ? "🎓 Generar Certificado" : "Certificado 🔒"}
           </button>

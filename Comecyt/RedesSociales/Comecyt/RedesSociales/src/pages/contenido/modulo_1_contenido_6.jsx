@@ -147,19 +147,18 @@ export default function ContenidoGmailBarraYPaginacion() {
           {
             correo,
             modulo_id: MODULO_ID,
-            progreso_actual: NUM_CONTENIDO + 1, // ✅ CORREGIDO: era numero_contenido
+            contenido_id: NUM_CONTENIDO
           }
         );
-        localStorage.setItem("progreso_mod1", "7");
+        localStorage.setItem("progreso_mod1", String(NUM_CONTENIDO));
       }
       navigate("/modulo/1/contenido/7"); // ✅ CORREGIDO: ruta nueva
     } catch (err) {
       console.error("Error al actualizar progreso:", err.response?.data || err);
       showToast(
-        "No se pudo guardar tu avance, pero puedes continuar.",
+        "No se pudo guardar tu avance. Intenta de nuevo.",
         "error"
       );
-      navigate("/modulo/1/contenido/7");
     } finally {
       setGuardando(false);
     }
@@ -187,40 +186,6 @@ export default function ContenidoGmailBarraYPaginacion() {
       `Obtuviste ${score} de 7 respuestas correctas.`,
       score === 7 ? "success" : "info"
     );
-  };
-
-  const finalizarContenido = async () => {
-    if (!puedeAvanzar) return;
-    setGuardando(true);
-    const correo = localStorage.getItem("correo");
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.post(
-        `${API_URL}/api/alumno/progreso/actualizar`,
-        { correo, modulo_id: MODULO_ID, progreso_actual: NUM_CONTENIDO },
-        token ? { headers: { Authorization: `Bearer ${token}` } } : {}
-      );
-
-      if (response.data?.success) {
-        window.scrollTo(0, 0);
-        // si es el último contenido, vuelve al inicio
-        if (NUM_CONTENIDO >= totalContenidos) {
-          navigate("/inicio");
-        } else {
-          navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
-        }
-      } else {
-        setToast('Error al guardar progreso. Intenta de nuevo.');
-        setTimeout(() => setToast(""), 3000);
-      }
-    } catch (err) {
-      console.error("❌ Error al guardar:", err.response?.data || err);
-      setToast('Error de conexión al guardar progreso');
-      setTimeout(() => setToast(""), 3000);
-    } finally {
-      setGuardando(false);
-    }
   };
 
   return (

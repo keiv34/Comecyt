@@ -1,3 +1,4 @@
+import { limpiarSesion } from "./context/limpiarSesion"
 // src/main.jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -47,7 +48,7 @@ axios.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.log('🚨 Token inválido, limpiando sesión')
-      localStorage.clear()
+      limpiarSesion()
       delete axios.defaults.headers.common['Authorization']
     }
     return Promise.reject(error)

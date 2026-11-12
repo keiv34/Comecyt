@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_5.css";
 
-"../../assets/publicacion_fb.png";
-import Seguridad_fbImg from "../../assets/seguridad_fb.png";
-import Seguridad2_fbImg from "../../assets/seguridad2_fb.png";
-import RecuperarCon_fbImg from "../../assets/recuperarCon_fb.png";
-import Paso2_fbImg from "../../assets/paso2_fb.png";
+import Publicacion_fbImg from "../../assets/Publicacion_fb.png";
+import Seguridad_fbImg from "../../assets/Seguridad_fb.png";
+import Seguridad2_fbImg from "../../assets/Seguridad2_fb.png";
+import RecuperarCon_fbImg from "../../assets/RecuperarCon_fb.png";
+import Paso2_fbImg from "../../assets/Paso2_fb.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 2; // ✅ Es módulo 2
 const NUM_CONTENIDO = 5;
 
@@ -197,7 +197,7 @@ export default function ModuloFacebookSeguridad() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/2/contenido/12");
+    navigate("/modulo/2/contenido/4");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

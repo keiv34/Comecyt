@@ -18,13 +18,13 @@ const router = express.Router();
 
 console.log('🔥 [AUTH ROUTES] Cargando rutas de auth...');
 
-// ✅ RUTA DE PRUEBA - Para verificar que el router se monta
+// ✅ RUTA DE PRUEBA
 router.get('/test', (req, res) => {
     console.log('✅ GET /api/auth/test funciona');
     res.json({ msg: 'Auth routes funcionando' });
 });
 
-// ✅ REGISTRO - Guarda en la tabla correcta según el rol
+// ✅ REGISTRO - Usa la columna 'password'
 router.post('/registrar', async (req, res) => {
     try {
         const { nombre, apellido, correo, contraseña, rol, telefono } = req.body;
@@ -35,11 +35,10 @@ router.post('/registrar', async (req, res) => {
             return res.status(400).json({ message: 'Todos los campos son obligatorios' });
         }
 
-        // ✅ CORREGIDO: Tu tabla usuarios usa alumno_id, no id
-        const [existeUsuario] = await pool.query('SELECT alumno_id FROM usuarios WHERE correo =?', [correo]);
-        const [existeDocente] = await pool.query('SELECT docente_id FROM DOCENTE WHERE correo =?', [correo]);
-        const [existeAlumno] = await pool.query('SELECT alumno_id FROM ALUMNO WHERE correo =?', [correo]);
-        const [existeAdmin] = await pool.query('SELECT admin_id FROM ADMINISTRADOR WHERE usuario =?', [correo]);
+        const [existeUsuario] = await pool.query('SELECT alumno_id FROM usuarios WHERE correo = ?', [correo]);
+        const [existeDocente] = await pool.query('SELECT docente_id FROM DOCENTE WHERE correo = ?', [correo]);
+        const [existeAlumno] = await pool.query('SELECT alumno_id FROM ALUMNO WHERE correo = ?', [correo]);
+        const [existeAdmin] = await pool.query('SELECT admin_id FROM ADMINISTRADOR WHERE usuario = ?', [correo]);
 
         if (existeUsuario.length > 0 || existeDocente.length > 0 || existeAlumno.length > 0 || existeAdmin.length > 0) {
             return res.status(400).json({ message: 'El correo ya está registrado' });
@@ -48,25 +47,23 @@ router.post('/registrar', async (req, res) => {
         const hash = await bcrypt.hash(contraseña, 10);
         let result;
 
-        // ✅ GUARDAR EN LA TABLA CORRECTA SEGÚN EL ROL
         if (rol === 'alumno') {
             [result] = await pool.query(
-                'INSERT INTO ALUMNO (nombre, apellido, correo, contraseña, telefono) VALUES (?,?,?,?,?)',
+                'INSERT INTO ALUMNO (nombre, apellido, correo, password, telefono) VALUES (?,?,?,?,?)',
                 [nombre, apellido, correo, hash, telefono || '']
             );
             console.log('✅ [REGISTRO] Alumno guardado en tabla ALUMNO:', correo);
         }
         else if (rol === 'docente') {
-            // ✅ AHORA SÍ INCLUYE telefono porque tu tabla ya lo tiene
             [result] = await pool.query(
-                'INSERT INTO DOCENTE (nombre, apellido, correo, contraseña, telefono) VALUES (?,?,?,?,?)',
+                'INSERT INTO DOCENTE (nombre, apellido, correo, password, telefono) VALUES (?,?,?,?,?)',
                 [nombre, apellido, correo, hash, telefono || '']
             );
             console.log('✅ [REGISTRO] Docente guardado en tabla DOCENTE:', correo);
         }
         else if (rol === 'admin') {
             [result] = await pool.query(
-                'INSERT INTO ADMINISTRADOR (nombre, apellido, usuario, contraseña) VALUES (?,?,?,?)',
+                'INSERT INTO ADMINISTRADOR (nombre, apellido, usuario, password) VALUES (?,?,?,?)',
                 [nombre, apellido, correo, hash]
             );
             console.log('✅ [REGISTRO] Admin guardado en tabla ADMINISTRADOR:', correo);
@@ -90,7 +87,7 @@ router.post('/registrar', async (req, res) => {
     }
 });
 
-// ✅ LOGIN PRINCIPAL - Busca en usuarios, DOCENTE, ADMINISTRADOR y ALUMNO
+// ✅ LOGIN PRINCIPAL - Corregido 'password as contraseña'
 router.post("/login", async (req, res) => {
     console.log("📦 Body:", req.body);
     const { correo, contraseña } = req.body;
@@ -98,18 +95,21 @@ router.post("/login", async (req, res) => {
     try {
         let user = null;
 
-        // ✅ CORREGIDO: Usa alumno_id como id porque así está tu tabla usuarios
-        let [users] = await pool.query("SELECT alumno_id as id, nombre, apellido, correo, contraseña, rol, 'usuario' as tabla FROM usuarios WHERE correo =?", [correo]);
+        // 1. Buscar en usuarios
+        let [users] = await pool.query(
+            "SELECT alumno_id as id, nombre, apellido, correo, password as contraseña, rol, 'usuario' as tabla FROM usuarios WHERE correo = ?",
+            [correo]
+        );
 
         if (users.length > 0) {
             user = users[0];
             console.log("✅ Usuario encontrado en usuarios:", user.correo, "Rol:", user.rol);
         }
 
-        // 2. Si no está, buscar en DOCENTE
+        // 2. Buscar en DOCENTE
         if (!user) {
             [users] = await pool.query(
-                "SELECT docente_id as id, nombre, apellido, correo, contraseña, 'docente' as rol, 'DOCENTE' as tabla FROM DOCENTE WHERE correo =?",
+                "SELECT docente_id as id, nombre, apellido, correo, password as contraseña, 'docente' as rol, 'DOCENTE' as tabla FROM DOCENTE WHERE correo = ?",
                 [correo]
             );
             if (users.length > 0) {
@@ -118,10 +118,10 @@ router.post("/login", async (req, res) => {
             }
         }
 
-        // 3. Si no está, buscar en ADMINISTRADOR
+        // 3. Buscar en ADMINISTRADOR
         if (!user) {
             [users] = await pool.query(
-                "SELECT admin_id as id, nombre, apellido, usuario as correo, contraseña, 'admin' as rol, 'ADMINISTRADOR' as tabla FROM ADMINISTRADOR WHERE usuario =?",
+                "SELECT admin_id as id, nombre, apellido, usuario as correo, password as contraseña, 'admin' as rol, 'ADMINISTRADOR' as tabla FROM ADMINISTRADOR WHERE usuario = ?",
                 [correo]
             );
             if (users.length > 0) {
@@ -130,10 +130,10 @@ router.post("/login", async (req, res) => {
             }
         }
 
-        // 4. Si no está, buscar en ALUMNO
+        // 4. Buscar en ALUMNO
         if (!user) {
             [users] = await pool.query(
-                "SELECT alumno_id as id, nombre, apellido, correo, contraseña, 'alumno' as rol, 'ALUMNO' as tabla FROM ALUMNO WHERE correo =?",
+                "SELECT alumno_id as id, nombre, apellido, correo, password as contraseña, 'alumno' as rol, 'ALUMNO' as tabla FROM ALUMNO WHERE correo = ?",
                 [correo]
             );
             if (users.length > 0) {
@@ -179,13 +179,13 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// ✅ LOGIN UNIVERSAL - Para miles de usuarios sin expiración
+// ✅ LOGIN UNIVERSAL
 router.post('/login-universal', async (req, res) => {
     try {
         const { correo, contraseña } = req.body;
 
         const [users] = await pool.query(
-            'SELECT * FROM usuarios WHERE correo =? AND activo = 1',
+            'SELECT *, password as contraseña FROM usuarios WHERE correo = ? AND activo = 1',
             [correo]
         );
 
@@ -226,27 +226,22 @@ router.post('/login-universal', async (req, res) => {
     }
 });
 
-// TUS RUTAS ORIGINALES - NO LAS QUITÉ
+// RUTAS ORIGINALES Y PROTEGIDAS
 router.post('/login/docente', loginDocente);
-
-console.log('🔥 [AUTH ROUTES] POST /login/docente registrado');
-
-// RUTAS PROTEGIDAS DE ADMIN
 router.get('/admin/datos', verifyToken, verifyAdmin, getAdminData);
 router.put('/admin/actualizar', verifyToken, verifyAdmin, updateAdminData);
 router.get('/admin/usuarios', verifyToken, verifyAdmin, getAllUsers);
 router.delete('/admin/usuarios/:id', verifyToken, verifyAdmin, deleteUser);
 
-// RUTAS TEMPORALES
+// RUTAS TEMPORALES DE FIX
 router.get('/fix-docente', async (req, res) => {
     try {
         const nuevoHash = await bcrypt.hash('123456', 10);
         const [result] = await pool.query(
-            `UPDATE DOCENTE SET contraseña =? WHERE correo = 'saulmartinez@ejemplo.com'`,
+            `UPDATE DOCENTE SET password = ? WHERE correo = 'saulmartinez@ejemplo.com'`,
             [nuevoHash]
         );
         const check = await bcrypt.compare('123456', nuevoHash);
-        console.log('🔧 [FIX-DOCENTE] Filas afectadas:', result.affectedRows);
         res.json({ msg: 'Contraseña actualizada', password: '123456', test: check, filas_afectadas: result.affectedRows });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -256,7 +251,7 @@ router.get('/fix-docente', async (req, res) => {
 router.get('/fix-admin', async (req, res) => {
     try {
         const nuevoHash = await bcrypt.hash('admin123', 10);
-        const [result] = await pool.query(`UPDATE usuarios SET contraseña =? WHERE correo = 'saul@gmail.com'`, [nuevoHash]);
+        const [result] = await pool.query(`UPDATE usuarios SET password = ? WHERE correo = 'saul@gmail.com'`, [nuevoHash]);
         const check = await bcrypt.compare('admin123', nuevoHash);
         res.json({ msg: 'Hash regenerado', test: check, filas_afectadas: result.affectedRows });
     } catch (error) {
@@ -267,7 +262,7 @@ router.get('/fix-admin', async (req, res) => {
 router.get('/fix-saul', async (req, res) => {
     try {
         const nuevoHash = await bcrypt.hash('123456', 10);
-        const [result] = await pool.query(`UPDATE usuarios SET contraseña =? WHERE correo = 'saul@gmail.com' AND rol = 'alumno'`, [nuevoHash]);
+        const [result] = await pool.query(`UPDATE usuarios SET password = ? WHERE correo = 'saul@gmail.com' AND rol = 'alumno'`, [nuevoHash]);
         if (result.affectedRows === 0) return res.status(404).json({ msg: 'No se encontró saul@gmail.com' });
         res.json({ msg: 'Arreglado solo saul@gmail.com', correo: 'saul@gmail.com', password: '123456' });
     } catch (error) {

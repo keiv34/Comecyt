@@ -16,7 +16,7 @@ import paso6FbImg from "../../assets/Paso6_fb.png";
 import paso7FbImg from "../../assets/Paso7_fb.png";
 import paso8FbImg from "../../assets/Paso8_fb.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 2;
 const NUM_CONTENIDO = 2;
 
@@ -197,7 +197,7 @@ export default function ContenidoFacebookFunciones() {
 
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/2/contenido/9");
+    navigate("/modulo/2/contenido/1");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

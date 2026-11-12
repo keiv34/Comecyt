@@ -2,12 +2,15 @@
 import { useEffect, useState } from "react";
 import { Outlet, Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { House, FileText, BookOpen, UserRound, ChartNoAxesColumn, Users, Presentation, MessageCircle, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import "../Css/DashboardLayout.css";
 
 const API_URL = 'http://localhost:4000';
 
 function DashboardLayout() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const { id } = useParams();
   const correo = localStorage.getItem("correo") || "Usuario";
   const rol = localStorage.getItem("rol") || "alumno"; // ✅ AGREGADO: leer rol
@@ -30,7 +33,7 @@ function DashboardLayout() {
           // Buscamos el avance del Módulo 1
           const mod1 = res.data.modulos.find(m => m.modulo_id === 1);
           if (mod1) setProgreso(mod1.progreso_actual);
-        } catch (err) {
+        } catch {
           console.error("Error al sincronizar progreso");
         }
       }
@@ -39,7 +42,7 @@ function DashboardLayout() {
   }, [correo, id, rol, navigate]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout();
     navigate("/");
   };
 
@@ -53,14 +56,12 @@ function DashboardLayout() {
           rel="noopener noreferrer"
           className="whatsapp-link"
         >
-          📱 Ayuda WhatsApp
+          <MessageCircle size={18} aria-hidden="true" /> Ayuda WhatsApp
         </a>
 
         <div className="header-right">
           <span className="user-email">{correo} {rol === 'admin' && '(Admin)'}</span>
-          <div className="user-avatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-            <img src="/default-avatar.png" alt="Usuario" />
-          </div>
+          <button type="button" className="dashboard-logout" onClick={handleLogout} aria-label="Cerrar sesión"><LogOut size={20} aria-hidden="true" /></button>
         </div>
       </header>
 
@@ -72,16 +73,16 @@ function DashboardLayout() {
             {rol === 'alumno' && (
               <>
                 <Link to="/inicio" className="nav-item">
-                  🏠 Inicio
+                  <House size={18} aria-hidden="true" /> Inicio
                 </Link>
                 <Link to="/presentacion" className="nav-item">
-                  📄 Presentación
+                  <FileText size={18} aria-hidden="true" /> Presentación
                 </Link>
                 <Link to="/contenidos" className="nav-item">
-                  📚 Contenidos
+                  <BookOpen size={18} aria-hidden="true" /> Contenidos
                 </Link>
                 <Link to="/perfil" className="nav-item">
-                  👤 Perfil
+                  <UserRound size={18} aria-hidden="true" /> Mi perfil
                 </Link>
               </>
             )}
@@ -90,13 +91,13 @@ function DashboardLayout() {
             {rol === 'docente' && (
               <>
                 <Link to="/docente/dashboard" className="nav-item">
-                  📊 Dashboard
+                  <ChartNoAxesColumn size={18} aria-hidden="true" /> Dashboard
                 </Link>
                 <Link to="/docente/alumnos" className="nav-item">
-                  👥 Mis Alumnos
+                  <Users size={18} aria-hidden="true" /> Mis Alumnos
                 </Link>
                 <Link to="/perfil" className="nav-item">
-                  👤 Perfil
+                  <UserRound size={18} aria-hidden="true" /> Mi perfil
                 </Link>
               </>
             )}
@@ -105,16 +106,16 @@ function DashboardLayout() {
             {rol === 'admin' && (
               <>
                 <Link to="/admin/dashboard" className="nav-item">
-                  📊 Dashboard
+                  <ChartNoAxesColumn size={18} aria-hidden="true" /> Dashboard
                 </Link>
                 <Link to="/admin/alumnos" className="nav-item">
-                  👥 Alumnos
+                  <Users size={18} aria-hidden="true" /> Alumnos
                 </Link>
                 <Link to="/admin/docentes" className="nav-item">
-                  👨‍🏫 Docentes
+                  <Presentation size={18} aria-hidden="true" /> Docentes
                 </Link>
                 <Link to="/admin/modulos" className="nav-item">
-                  📚 Módulos
+                  <BookOpen size={18} aria-hidden="true" /> Módulos
                 </Link>
               </>
             )}
@@ -127,7 +128,7 @@ function DashboardLayout() {
               rel="noopener noreferrer"
               className="whatsapp-btn"
             >
-              📱 Ayuda WhatsApp<br />
+              <MessageCircle size={18} aria-hidden="true" /> Ayuda WhatsApp<br />
               <small>+52 712 126 5349</small>
             </a>
           </div>

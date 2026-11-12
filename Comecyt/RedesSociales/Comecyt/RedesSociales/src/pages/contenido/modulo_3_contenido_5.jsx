@@ -15,7 +15,7 @@ import wBusinessPaso5 from "../../assets/wBusinessPaso5.jpg";
 import wBusinessPaso6 from "../../assets/wBusinessPaso6.png";
 import wBusinessPaso7 from "../../assets/wBusinessPaso7.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 5;
 const TOTAL_PREGUNTAS = 6;
@@ -203,7 +203,7 @@ export default function ContenidoWhatsappBusiness() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/3/contenido/18"); // ✅ Va al contenido 18 del módulo 3
+    navigate("/modulo/3/contenido/4");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

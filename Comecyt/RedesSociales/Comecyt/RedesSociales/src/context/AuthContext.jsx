@@ -1,5 +1,15 @@
+import { limpiarSesion } from "./limpiarSesion";
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const api = axios.create({ baseURL: API_URL });
+
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+});
 
 export const AuthContext = createContext();
 
@@ -17,29 +27,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-
-    // ✅ NUEVO: Instancia de axios con baseURL y token automático
-    const api = axios.create({
-        baseURL: API_URL,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-    // ✅ Interceptor: Agrega el token a cada request automáticamente
-    api.interceptors.request.use(
-        (config) => {
-            const currentToken = localStorage.getItem("token");
-            if (currentToken) {
-                config.headers.Authorization = `Bearer ${currentToken}`;
-            }
-            return config;
-        },
-        (error) => Promise.reject(error)
-    );
-
-    useEffect(() => {
+useEffect(() => {
         console.log('🚀 [AuthContext] Iniciando carga...');
 
         const savedToken = localStorage.getItem("token");
@@ -56,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
         if (!savedToken || !savedCorreo || !savedRole) {
             console.log('🗑 [AuthContext] Faltan datos, limpiando sesión');
-            localStorage.clear();
+            limpiarSesion();
             delete axios.defaults.headers.common['Authorization'];
             setToken(null);
             setRole(null);
@@ -83,7 +71,6 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (correo, contraseña) => {
         try {
-            console.log('🔐 [LOGIN] Intentando login:', correo);
 
             const response = await axios.post(`${API_URL}/api/auth/login`, {
                 correo,
@@ -92,8 +79,6 @@ export const AuthProvider = ({ children }) => {
 
             const { token, user, role } = response.data;
 
-            console.log('✅ [LOGIN] Respuesta backend:', response.data);
-            console.log('✅ [LOGIN] Role recibido:', role || user.rol);
 
             localStorage.setItem("token", token);
             localStorage.setItem("role", role || user.rol);
@@ -107,7 +92,6 @@ export const AuthProvider = ({ children }) => {
 
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            console.log('✅ [LOGIN] Sesión guardada correctamente');
 
             return {
                 success: true,
@@ -124,9 +108,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const actualizarUsuario = cambios => {
+        if (!user) return;
+        const actualizado = { ...user, ...cambios };
+        localStorage.setItem("user", JSON.stringify(actualizado));
+        setUser(actualizado);
+    };
+
     const logout = () => {
         console.log('👋 [LOGOUT] Cerrando sesión');
-        localStorage.clear();
+        limpiarSesion();
         delete axios.defaults.headers.common['Authorization'];
         setToken(null);
         setRole(null);
@@ -153,6 +144,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
+        actualizarUsuario,
         register,
         isAuthenticated: !!token,
         API_URL,

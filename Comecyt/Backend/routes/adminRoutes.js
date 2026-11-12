@@ -25,7 +25,6 @@ const router = express.Router();
 // ==========================
 router.use((req, res, next) => {
   console.log(`\n📍 [ADMIN-ROUTE] ${req.method} ${req.originalUrl}`);
-  console.log(`📍 [ADMIN-ROUTE] Body:`, req.body);
   next();
 });
 
@@ -116,64 +115,44 @@ router.get('/dashboard-resumen', async (req, res) => {
   }
 });
 
-// ✅ Dashboard con stats REALES por módulo
+// Resumen del catálogo y la actividad registrada en MySQL.
 router.get('/dashboard/modulos', async (req, res) => {
-  try {
-    console.log('📊 [DASHBOARD-MODULOS] Calculando stats reales...');
-
-    const MODULOS = [
-      { id: 1, nombre: "Correo Electrónico", inicio: 1, fin: 8 },
-      { id: 2, nombre: "Facebook y Marketplace", inicio: 9, fin: 14 },
-      { id: 3, nombre: "WhatsApp y WhatsApp Business", inicio: 15, fin: 21 },
-      { id: 4, nombre: "Instagram", inicio: 22, fin: 29 },
-      { id: 5, nombre: "Retos Educaplay", inicio: 30, fin: 32 }
-    ];
-
-    const statsModulos = [];
-
-    for (const modulo of MODULOS) {
-      const [alumnosEnModulo] = await db.query(`
-        SELECT COUNT(DISTINCT pm.alumno_id) as total
-        FROM progreso_modulos pm
-        WHERE pm.modulo_id = 1 AND pm.progreso_actual >=?
-      `, [modulo.inicio]);
-
-      const [progresoPromedio] = await db.query(`
-        SELECT AVG(
+  const [modulos] = await db.query(`
+    SELECT m.modulo_id, m.titulo AS nombre, m.total_contenidos AS contenidos,
+      (SELECT COUNT(*) FROM EVALUACION e WHERE e.modulo_id = m.modulo_id) AS evaluaciones,
+      (SELECT COUNT(*) FROM CERTIFICADO c WHERE c.modulo_id = m.modulo_id) AS certificados,
+      COALESCE(p.alumnos, 0) AS alumnos,
+      COALESCE(ROUND(100 * p.promedio / NULLIF(m.total_contenidos, 0)), 0) AS progreso_promedio
+    FROM MODULO m
+    LEFT JOIN (
+      SELECT modulo_id, COUNT(*) AS alumnos, AVG(completadas) AS promedio
+      FROM (
+        SELECT c.modulo_id, c.correo, COUNT(*) AS completadas
+        FROM contenidos_completados c
+        JOIN MODULO m ON m.modulo_id = c.modulo_id
+        WHERE c.contenido_id BETWEEN 1 AND m.total_contenidos
+        GROUP BY c.modulo_id, c.correo
+        UNION ALL
+        SELECT p.modulo_id, p.correo,
           CASE
-            WHEN pm.progreso_actual >=? THEN 100
-            WHEN pm.progreso_actual <? THEN 0
-            ELSE ROUND(((pm.progreso_actual -? + 1) / (? -? + 1)) * 100)
-          END
-        ) as promedio
-        FROM progreso_modulos pm
-        WHERE pm.modulo_id = 1 AND pm.progreso_actual >=?
-      `, [modulo.fin, modulo.inicio, modulo.fin, modulo.inicio, modulo.inicio]);
-
-      const [certificados] = await db.query(`
-        SELECT COUNT(*) as total
-        FROM progreso_modulos pm
-        WHERE pm.modulo_id = 1 AND pm.progreso_actual >=?
-      `, [modulo.fin]);
-
-      statsModulos.push({
-        modulo_id: modulo.id,
-        nombre: modulo.nombre,
-        alumnos: alumnosEnModulo[0].total || 0,
-        contenidos: modulo.fin - modulo.inicio + 1,
-        evaluaciones: 1,
-        certificados: certificados[0].total || 0,
-        progreso_promedio: Math.round(progresoPromedio[0].promedio || 0)
-      });
-    }
-
-    console.log('✅ [DASHBOARD-MODULOS] Stats calculados:', statsModulos);
-    res.json(statsModulos);
-
-  } catch (error) {
-    console.error('💥 [DASHBOARD-MODULOS] Error:', error);
-    res.status(500).json({ mensaje: 'Error obteniendo stats de módulos' });
-  }
+            WHEN p.progreso_actual > m.total_contenidos
+              THEN ROUND(LEAST(p.progreso_actual, 100) * m.total_contenidos / 100)
+            ELSE p.progreso_actual
+          END AS completadas
+        FROM progreso_modulos p
+        JOIN MODULO m ON m.modulo_id = p.modulo_id
+        WHERE p.progreso_actual > 0 AND NOT EXISTS (
+          SELECT 1 FROM contenidos_completados c
+          WHERE c.modulo_id = p.modulo_id AND c.correo = p.correo
+            AND c.contenido_id BETWEEN 1 AND m.total_contenidos
+        )
+      ) por_alumno
+      WHERE completadas > 0
+      GROUP BY modulo_id
+    ) p ON p.modulo_id = m.modulo_id
+    ORDER BY m.modulo_id
+  `);
+  res.json(modulos.map(modulo => ({ ...modulo, progreso_promedio: Number(modulo.progreso_promedio) })));
 });
 
 // ==========================

@@ -149,7 +149,7 @@ const Modulo5Contenido15 = () => {
             );
             if (response.data?.success) {
                 window.scrollTo(0, 0);
-                navigate(`/modulo/${MODULO_ID}`);
+                navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
             } else {
                 alert('Error al guardar progreso. Intenta de nuevo.');
             }

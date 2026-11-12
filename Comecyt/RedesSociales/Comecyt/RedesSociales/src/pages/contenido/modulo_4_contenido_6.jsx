@@ -10,7 +10,7 @@ import igProfesionalPaso3 from "../../assets/igProfesionalPaso3.png";
 import igShoppingPaso1 from "../../assets/igShoppingPaso1.png";
 import igShoppingPaso2 from "../../assets/igShoppingPaso2.png";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 6;
 const TOTAL_PREGUNTAS = 6;
@@ -188,7 +188,7 @@ export default function ContenidoInstagramNegociosCreadores() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/1/contenido/26"); // ✅ Va al contenido 26
+    navigate("/modulo/4/contenido/5");
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido
