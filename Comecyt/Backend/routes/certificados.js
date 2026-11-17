@@ -1,109 +1,246 @@
 import express from "express";
-import path from "node:path";
-import { randomUUID } from "node:crypto";
-import { readFile, writeFile, unlink } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-import { buffer } from "node:stream/consumers";
-import { pool } from "../config/database.js";
-import { verifyAlumno, verifyToken } from "../middleware/auth.js";
-import { cargarAvance } from "../controllers/progresoController.js";
-import { catalogo, idEnConflicto } from "../services/catalogo.js";
-import { modulosAprobados } from "../services/acreditacion.js";
-import { crearConstancia, VERSION_CONSTANCIA } from "../services/constanciaPdf.js";
+import path from "path";
+import fs from "fs";
+import PDFDocument from 'pdfkit';
+import { fileURLToPath } from 'url';
 
 const router = express.Router();
-const directorio = fileURLToPath(new URL("../Certificados/", import.meta.url));
-const archivoAgora = /^Constancia_AGORA_M\d+_(?:v\d+_)?[a-f0-9-]{36}\.pdf$/;
 
-router.post("/generar", verifyToken, verifyAlumno, async (req, res) => {
-  const moduloId = Number(req.body?.modulo_id);
-  const definicion = catalogo.find(modulo => modulo.id === moduloId);
-  if (!definicion) return res.status(400).json({ error: "Selecciona un módulo válido." });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CERTS_DIR = path.join(__dirname, '../Certificados');
+const LOGO_PATH = path.join(__dirname, '../assets/logo.png');
 
-  const db = await pool.getConnection();
-  let archivoCreado;
-  let confirmado = false;
-  try {
-    await db.beginTransaction();
-    const [[alumno]] = await db.query(
-      "SELECT alumno_id, nombre, apellido FROM ALUMNO WHERE correo = ? FOR UPDATE", [req.user.correo]
-    );
-    if (!alumno) return res.status(404).json({ error: "Alumno no encontrado." });
+if (!fs.existsSync(CERTS_DIR)) {
+    fs.mkdirSync(CERTS_DIR, { recursive: true });
+    console.log(`📁 Carpeta creada: ${CERTS_DIR}`);
+}
 
-    const [[modulo]] = await db.query("SELECT titulo, total_contenidos FROM MODULO WHERE modulo_id = ?", [moduloId]);
-    if (!modulo || idEnConflicto(moduloId, modulo.titulo) || modulo.total_contenidos !== definicion.lecciones.length) {
-      return res.status(409).json({ error: "El catálogo de MySQL requiere sincronización." });
-    }
+// ===== Config de textos =====
+const INSTITUCION = 'Tecnológico de Estudios Superiores de San Felipe del Progreso';
+const NOMBRE_CURSO = 'Alfabetización Digital en Redes Sociales';
+const MODULOS_ACREDITADOS = [
+    'Correo Electrónico',
+    'Facebook',
+    'WhatsApp Business',
+    'Instagram',
+    'Retos Educaplay'
+];
 
-    const [[existente]] = await db.query(
-      "SELECT certificado_id, fecha_emision, ruta_certificado FROM CERTIFICADO WHERE alumno_id = ? AND modulo_id = ?",
-      [alumno.alumno_id, moduloId]
-    );
-    let archivo = existente?.ruta_certificado;
-    let pdf;
-    if (archivo) {
-      pdf = await readFile(path.join(directorio, path.win32.basename(archivo))).catch(error => {
-        if (error.code !== "ENOENT") throw error;
-        return null;
-      });
-    }
+// 🔷 Dibuja el clúster de "esquirlas" diagonales azules en una esquina.
+function dibujarEsquinaGeometrica(doc, origin, dir) {
+    const { x: ox, y: oy } = origin;
 
-    if (archivoAgora.test(archivo)) {
-      if (!archivo.startsWith(`Constancia_AGORA_M${moduloId}_${VERSION_CONSTANCIA}_`)) pdf = null;
-    } else {
-      const avance = await cargarAvance(db, req.user.correo, moduloId, modulo.total_contenidos);
-      const aprobados = await modulosAprobados(db, alumno.alumno_id);
-      if (avance.size === modulo.total_contenidos && aprobados.has(moduloId)) {
-        pdf = null;
-      } else if (!pdf) {
-        return res.status(403).json({ error: "Completa las lecciones y aprueba la evaluación del módulo para obtener tu constancia." });
-      }
-    }
+    doc.save();
+    doc.translate(ox, oy);
+    doc.scale(dir.x, dir.y);
 
-    if (!pdf) {
-      const folio = `AGORA-M${moduloId}-${alumno.alumno_id}`;
-      const doc = crearConstancia({
-        alumno, modulo: definicion, fecha: existente?.fecha_emision ?? new Date(), folio
-      });
-      const contenido = buffer(doc);
-      doc.end();
-      pdf = await contenido;
-      archivo = `Constancia_AGORA_M${moduloId}_${VERSION_CONSTANCIA}_${randomUUID()}.pdf`;
-      archivoCreado = path.join(directorio, archivo);
-      await writeFile(archivoCreado, pdf, { flag: "wx" });
-      await db.query(`
-        INSERT INTO CERTIFICADO (alumno_id, modulo_id, ruta_certificado)
-        VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE ruta_certificado = ?
-      `, [alumno.alumno_id, moduloId, archivo, archivo]);
-    }
+    const franja = (w, h, angleDeg, color, opacity = 1) => {
+        doc.save();
+        doc.rotate(angleDeg);
+        doc.opacity(opacity);
+        doc.rect(0, -h / 2, w, h).fill(color);
+        doc.opacity(1);
+        doc.restore();
+    };
 
-    await db.commit();
-    confirmado = true;
-    return res.attachment(`Constancia_AGORA_Modulo_${moduloId}.pdf`).send(pdf);
-  } finally {
+    // Ajuste de colores para que coincida más con la imagen de referencia (tonos azules vibrantes)
+    doc.opacity(1);
+    doc.polygon([0, 0], [340, 0], [0, 250]).fill('#051d59'); // Azul muy oscuro de base
+
+    franja(300, 55, -34, '#0a369d', 0.95);
+    franja(260, 34, -34, '#0056e0', 0.9);
+    franja(210, 18, -34, '#00a3ff', 0.85);
+    franja(150, 8, -20, '#ffffff', 0.35);
+    franja(120, 6, -46, '#00a3ff', 0.6);
+
+    doc.restore();
+}
+
+router.post("/generar", async (req, res) => {
+    const { alumno_id, modulo_id, nombre, apellido } = req.body;
+
     try {
-      if (!confirmado) {
-        await db.rollback();
-        if (archivoCreado) {
-          await unlink(archivoCreado).catch(error => {
-            if (error.code !== "ENOENT") console.error("No se pudo retirar la constancia temporal:", error);
-          });
+        const nombreCompleto = `${nombre} ${apellido}`;
+        
+        // Formatear el nombre para que cada palabra inicie con mayúscula (ej. Ismael Antonio Gonzalez)
+        const nombreMostrar = nombreCompleto
+            .split(' ')
+            .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase())
+            .join(' ');
+
+        const nombreLimpio = nombreCompleto
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, '_');
+
+        const nombreArchivo = `Certificado_AGORA_${nombreLimpio}.pdf`;
+        const rutaCompleta = path.join(CERTS_DIR, nombreArchivo);
+
+        console.log(`📍 Guardando en: ${rutaCompleta}`);
+
+        if (fs.existsSync(rutaCompleta)) {
+            fs.unlinkSync(rutaCompleta);
+            console.log('🗑️ Archivo viejo eliminado');
         }
-      }
-    } finally {
-      db.release();
+
+        const doc = new PDFDocument({
+            size: 'A4',
+            layout: 'landscape',
+            margin: 0
+        });
+
+        const stream = fs.createWriteStream(rutaCompleta);
+        doc.pipe(stream);
+
+        const pageWidth = doc.page.width;   // ~842
+        const pageHeight = doc.page.height; // ~595
+
+        const AZUL_CONSTANCIA = '#103b87';
+        const GRIS_TEXTO = '#555555';
+        const GRIS_CLARO = '#888888';
+
+        // 1) Fondo general
+        doc.rect(0, 0, pageWidth, pageHeight).fill('#f4f6f9');
+
+        // 2) Esquinas geométricas (detrás de la tarjeta blanca)
+        dibujarEsquinaGeometrica(doc, { x: pageWidth, y: 0 }, { x: -1, y: 1 });   
+        dibujarEsquinaGeometrica(doc, { x: 0, y: pageHeight }, { x: 1, y: -1 });  
+
+        // 3) Tarjeta blanca central con sombra simulada
+        const cardX = 60, cardY = 50;
+        const cardW = pageWidth - cardX * 2;
+        const cardH = pageHeight - cardY * 2;
+        
+        doc.rect(cardX + 5, cardY + 5, cardW, cardH).fill('#e0e4eb');
+        doc.rect(cardX, cardY, cardW, cardH).fill('#ffffff');
+
+        // ===== Contenido =====
+        
+        let cursorY = cardY + 50;
+
+        // Institución (Top, Itálica)
+        doc.font('Helvetica-Oblique').fontSize(14).fillColor(GRIS_TEXTO)
+            .text(INSTITUCION, cardX, cursorY, { width: cardW, align: 'center' });
+
+        // Título CONSTANCIA
+        cursorY = doc.y + 25;
+        doc.font('Helvetica-Bold').fontSize(52).fillColor(AZUL_CONSTANCIA)
+            .text('CONSTANCIA', cardX, cursorY, {
+                width: cardW,
+                align: 'center',
+                characterSpacing: 14 
+            });
+
+        // 🔴 Párrafo descriptivo CORREGIDO (Sin continued: true)
+        cursorY = doc.y + 20;
+        
+        doc.font('Helvetica').fontSize(14).fillColor(GRIS_TEXTO)
+            .text('Por haber concluido satisfactoriamente el curso de', cardX, cursorY, { width: cardW, align: 'center' });
+
+        doc.font('Helvetica-Bold')
+            .text(`${NOMBRE_CURSO},`, cardX, doc.y + 4, { width: cardW, align: 'center' });
+
+        doc.font('Helvetica')
+            .text('demostrando compromiso, participación activa y la adquisición de competencias', cardX, doc.y + 4, { width: cardW, align: 'center' });
+            
+        doc.text('digitales esenciales para el entorno actual.', cardX, doc.y + 2, { width: cardW, align: 'center' });
+
+        // Nombre del Alumno
+        cursorY = doc.y + 40;
+        doc.font('Helvetica-Bold').fontSize(24).fillColor('#222222')
+            .text(nombreMostrar, cardX, cursorY, { width: cardW, align: 'center' });
+
+        // Línea debajo del nombre
+        const yFirma = doc.y + 8;
+        doc.strokeColor(GRIS_TEXTO).lineWidth(1.5)
+            .moveTo(pageWidth / 2 - 220, yFirma)
+            .lineTo(pageWidth / 2 + 220, yFirma)
+            .stroke();
+
+        // Módulos Acreditados
+        cursorY = yFirma + 30;
+        doc.font('Helvetica-Bold').fontSize(12).fillColor(GRIS_TEXTO)
+            .text('MÓDULOS ACREDITADOS', cardX, cursorY, {
+                width: cardW,
+                align: 'center',
+                characterSpacing: 4
+            });
+
+        // Lista de Módulos
+        cursorY = doc.y + 6;
+        doc.font('Helvetica').fontSize(13).fillColor(GRIS_TEXTO)
+            .text(MODULOS_ACREDITADOS.join('   '), cardX, cursorY, {
+                width: cardW,
+                align: 'center'
+            });
+
+        // Fecha de emisión y Folio (Abajo)
+        const fechaTexto = new Date().toLocaleDateString('es-MX', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+        
+        doc.font('Helvetica-Oblique').fontSize(11).fillColor(GRIS_CLARO)
+            .text(`Fecha de expedición: ${fechaTexto}`, cardX, cardY + cardH - 45, {
+                width: cardW,
+                align: 'center'
+            });
+
+        doc.font('Helvetica').fontSize(9).fillColor('#d3d3d3')
+            .text(`Folio: AGORA-${alumno_id || 'X'}-${modulo_id || 'X'}-${Date.now()}`, cardX, doc.y + 5, {
+                width: cardW,
+                align: 'center'
+            });
+
+        doc.end();
+
+        await new Promise((resolve, reject) => {
+            stream.on('finish', () => {
+                console.log(`✅ PDF generado correctamente`);
+                resolve();
+            });
+            stream.on('error', (err) => {
+                console.error("❌ Error en stream:", err);
+                reject(err);
+            });
+        });
+
+        res.json({
+            success: true,
+            archivo: `/api/certificados/descargar/${nombreArchivo}`,
+            mensaje: "Certificado generado correctamente"
+        });
+
+    } catch (error) {
+        console.error("❌ Error generando certificado:", error);
+        res.status(500).json({ error: error.message });
     }
-  }
+});
+
+router.get("/alumno/:alumno_id", (req, res) => {
+    try {
+        const archivos = fs.readdirSync(CERTS_DIR)
+            .filter(file => file.endsWith('.pdf'))
+            .map(file => ({
+                nombre: file,
+                url: `/certificados/${file}`
+            }));
+
+        res.json({ certificados: archivos });
+    } catch (error) {
+        res.status(500).json({ error: "No se pudieron listar los certificados" });
+    }
 });
 
 router.get("/descargar/:nombre", (req, res) => {
-  const { nombre } = req.params;
-  if (nombre !== path.basename(nombre) || !nombre.endsWith(".pdf")) {
-    return res.status(404).json({ error: "Constancia no encontrada." });
-  }
-  return res.download(nombre, { root: directorio }, error => {
-    if (error && !res.headersSent) res.status(error.status === 404 ? 404 : 500).json({ error: "No se pudo abrir la constancia." });
-  });
+    const { nombre } = req.params;
+    const ruta = path.join(CERTS_DIR, nombre);
+
+    if (fs.existsSync(ruta)) {
+        res.download(ruta);
+    } else {
+        res.status(404).json({ error: "Certificado no encontrado" });
+    }
 });
 
 export default router;

@@ -1,19 +1,17 @@
 // src/pages/Temario.jsx
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { MODULOS } from "../curso/catalogo";
+import axios from "axios";
 import { MessageCircle, CheckCircle2, Lock, Circle } from "lucide-react";
 import "../Css/Temario.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Temario() {
   const navigate = useNavigate();
   const [completados, setCompletados] = useState({}); // {1: [1,2,3], 2: [1],...}
-  const [modulosVistaPrevia, setModulosVistaPrevia] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { api, user } = useAuth();
-  const correo = user?.correo;
-  const [errorProgreso, setErrorProgreso] = useState(false);
+  const correo = localStorage.getItem("correo");
 
   useEffect(() => {
     const cargarProgreso = async () => {
@@ -23,34 +21,116 @@ function Temario() {
       }
 
       try {
-        const res = await api.post("/api/alumno/progreso", { correo });
+        // Este endpoint debe devolver todos los contenidos completados del usuario
+        const res = await axios.get(`${API_URL}/progreso/contenidos-completados/${correo}`);
 
         // Agrupamos por modulo_id: {1: [1,2,3], 2: [1,2],...}
         const agrupados = {};
-        res.data.contenidosCompletados.forEach(item => {
+        res.data.forEach(item => {
           if (!agrupados[item.modulo_id]) agrupados[item.modulo_id] = [];
-          agrupados[item.modulo_id].push(Number(item.contenido_id));
+          agrupados[item.modulo_id].push(item.num_contenido);
         });
 
         setCompletados(agrupados);
-        setModulosVistaPrevia(res.data.modulos_vista_previa ?? []);
       } catch (error) {
         console.error("Error cargando progreso:", error);
-        setErrorProgreso(true);
       } finally {
         setLoading(false);
       }
     };
 
     cargarProgreso();
-  }, [api, correo]);
+  }, [correo]);
+
+  const secciones = [
+    {
+      titulo: "Correo Electrónico",
+      icon: "📧",
+      moduloId: 1,
+      temas: [
+        { id: 1, nombre: "Introducción al correo electrónico", contenidoId: 1 },
+        { id: 2, nombre: "Crear correo Electrónico Gmail", contenidoId: 2 },
+        { id: 3, nombre: "Interfaz principal de Gmail", contenidoId: 3 },
+        { id: 4, nombre: "Panel lateral izquierdo", contenidoId: 4 },
+        { id: 5, nombre: "Categorías y etiquetas en Gmail", contenidoId: 5 },
+        { id: 6, nombre: "Barra de herramientas", contenidoId: 6 },
+        { id: 7, nombre: "Configuración y personalización", contenidoId: 7 },
+        { id: 8, nombre: "Examen de correo electrónico", contenidoId: 8 },
+      ]
+    },
+    {
+      titulo: "Facebook y Marketplace",
+      icon: "👥",
+      moduloId: 2,
+      temas: [
+        { id: 9, nombre: "Introducción a Facebook", contenidoId: 1 },
+        { id: 10, nombre: "Funciones principales", contenidoId: 2 },
+        { id: 11, nombre: "Páginas, grupos y eventos", contenidoId: 3 },
+        { id: 12, nombre: "Seguridad y configuración", contenidoId: 4 },
+        { id: 13, nombre: "Marketplace y seguridad", contenidoId: 5 },
+        { id: 14, nombre: "Examen de Facebook", contenidoId: 6 },
+      ]
+    },
+    {
+      titulo: "WhatsApp y WhatsApp Business",
+      icon: "📱",
+      moduloId: 3,
+      temas: [
+        { id: 15, nombre: "Introducción a WhatsApp", contenidoId: 1 },
+        { id: 16, nombre: "Registro y configuración", contenidoId: 2 },
+        { id: 17, nombre: "Llamadas y grupos", contenidoId: 3 },
+        { id: 18, nombre: "Seguridad avanzada", contenidoId: 4 },
+        { id: 19, nombre: "WhatsApp Business: Perfil", contenidoId: 5 },
+        { id: 20, nombre: "Catálogo y estadísticas", contenidoId: 6 },
+        { id: 21, nombre: "Examen de WhatsApp", contenidoId: 7 },
+      ]
+    },
+    {
+      titulo: "Instagram",
+      icon: "📸",
+      moduloId: 4,
+      temas: [
+        { id: 22, nombre: "Introducción a Instagram", contenidoId: 1 },
+        { id: 23, nombre: "Configuración inicial", contenidoId: 2 },
+        { id: 24, nombre: "Publicaciones en el feed", contenidoId: 3 },
+        { id: 25, nombre: "Historias y Reels", contenidoId: 4 },
+        { id: 26, nombre: "Herramientas de descubrimiento", contenidoId: 5 },
+        { id: 27, nombre: "Instagram para negocios", contenidoId: 6 },
+        { id: 28, nombre: "Buenas prácticas", contenidoId: 7 },
+        { id: 29, nombre: "Examen de Instagram", contenidoId: 8 },
+      ]
+    },
+    {
+      titulo: "Retos Educaplay",
+      icon: "🎮",
+      moduloId: 5,
+      temas: [
+        { id: 30, nombre: "Reto: Sopa de letras digital", contenidoId: 1 },
+        { id: 31, nombre: "Reto: Crucigrama de redes sociales", contenidoId: 2 },
+        { id: 32, nombre: "Reto final: Memorama tecnológico", contenidoId: 3 },
+        { id: 33, nombre: "Reto: Correo Electrónico Experto", contenidoId: 4 },
+        { id: 34, nombre: "Reto: Sopa - WhatsApp Business", contenidoId: 5 },
+        { id: 35, nombre: "Reto: Sopa - Llamadas Telefónicas", contenidoId: 6 },
+        { id: 36, nombre: "Reto: Sopa - SMS/Smishing", contenidoId: 7 },
+        { id: 37, nombre: "Reto: Sopa - Extorsión Telefónica", contenidoId: 8 },
+        { id: 38, nombre: "Reto: Sopa - Premios Falsos", contenidoId: 9 },
+        { id: 39, nombre: "Reto: Crucigrama - Ciberseguridad", contenidoId: 10 },
+        { id: 40, nombre: "Reto final: Memorama Tecnológico 2", contenidoId: 11 },
+        { id: 41, nombre: "Reto: Sopa de letras - Seguridad Avanzada", contenidoId: 12 },
+        { id: 42, nombre: "Reto: Simulador Telefónico - Anti-Vishing", contenidoId: 13 },
+        { id: 43, nombre: "Reto: Blindaje de Cuenta - WhatsApp Seguro", contenidoId: 14 },
+        { id: 44, nombre: "Reto final: Reclutamiento Seguro - Anti-JobScams", contenidoId: 15 },
+      ]
+    }
+  ];
 
   const estaCompletado = (moduloId, contenidoId) => {
     return completados[moduloId]?.includes(contenidoId) || false;
   };
 
   const estaBloqueado = (moduloId, contenidoId) => {
-    return !modulosVistaPrevia.includes(moduloId) && contenidoId > 1 && !estaCompletado(moduloId, contenidoId) && !estaCompletado(moduloId, contenidoId - 1);
+    if (contenidoId === 1) return false; // El primero siempre abierto
+    return !estaCompletado(moduloId, contenidoId - 1); // Bloqueado si el anterior no está
   };
 
   const handleClick = (tema, moduloId) => {
@@ -68,22 +148,17 @@ function Temario() {
     <div className="temario-container">
       <h1 className="temario-titulo">📋 Temario del Curso</h1>
 
-      {errorProgreso && <p role="alert">No se pudo cargar tu avance.</p>}
-
-      {MODULOS.map(seccion => (
-        <div key={seccion.id} className="modulo-card">
-          <h2 className="modulo-titulo">{seccion.icono} {seccion.numero}. {seccion.titulo}</h2>
-          {modulosVistaPrevia.includes(seccion.id) && <p>Vista previa · Todas las lecciones disponibles</p>}
+      {secciones.map((seccion, idx) => (
+        <div key={idx} className="modulo-card">
+          <h2 className="modulo-titulo">{seccion.icon} {seccion.titulo}</h2>
           <div className="temas-lista">
             {seccion.temas.map((tema) => {
               const completado = estaCompletado(seccion.moduloId, tema.contenidoId);
               const bloqueado = estaBloqueado(seccion.moduloId, tema.contenidoId);
 
               return (
-                <button
-                  type="button"
-                  disabled={bloqueado}
-                  key={tema.contenidoId}
+                <div
+                  key={tema.id}
                   className={`tema-item ${bloqueado ? 'bloqueado' : 'disponible'} ${completado ? 'completado' : ''}`}
                   onClick={() => handleClick(tema, seccion.moduloId)}
                 >
@@ -101,7 +176,7 @@ function Temario() {
                   </span>
                   {completado && <span className="check-text">Completado</span>}
                   {bloqueado && <span className="check-text">Bloqueado</span>}
-                </button>
+                </div>
               );
             })}
           </div>

@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_2_contenido_6_Eval.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = "http://localhost:4000";
 const MODULO_ID = 2; // ✅ CORREGIDO: Era 1, ahora 2 porque es Facebook
 const NUM_CONTENIDO = 6; // ✅ CORREGIDO: Ajusta según cuántos contenidos tiene el módulo 2
 const EVALUACION_ID = 2; // ⚠️ ajusta este ID según tu BD
 const MAX_INTENTOS = 2;
 const TOTAL_PREGUNTAS = 15;
 const APROBADO_MIN_PERCENT = 70;
+const SIGUIENTE_MODULO_ID = 3;
 const PRIMER_CONTENIDO_SIGUIENTE_MODULO = 1; // ✅ Ajusta según tu estructura
 
 export default function ContenidoFacebookExamenFinal() {
@@ -209,6 +210,12 @@ export default function ContenidoFacebookExamenFinal() {
           progreso_actual: NUM_CONTENIDO
         });
 
+        await axios.post(`${API_URL}/api/alumno/progreso/actualizar`, {
+          correo,
+          modulo_id: SIGUIENTE_MODULO_ID,
+          progreso_actual: 0
+        });
+
         console.log("💾 Módulo 2 completado y Módulo 3 desbloqueado");
         localStorage.setItem("progreso_mod2", String(NUM_CONTENIDO));
         localStorage.setItem("progreso_mod3", "0");
@@ -247,7 +254,7 @@ export default function ContenidoFacebookExamenFinal() {
 
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/2/contenido/5");
+    navigate("/modulo/2/contenido/7");
   };
 
   const puntajePorcentaje = (quizScore / TOTAL_PREGUNTAS) * 100;
@@ -275,7 +282,7 @@ export default function ContenidoFacebookExamenFinal() {
         if (NUM_CONTENIDO >= totalContenidos) {
           navigate("/inicio");
         } else {
-          navigate("/temario");
+          navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
         }
       } else {
         setToast('Error al guardar progreso. Intenta de nuevo.');

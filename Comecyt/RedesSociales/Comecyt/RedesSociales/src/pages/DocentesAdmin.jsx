@@ -46,7 +46,7 @@ export default function DocentesAdmin() {
   const cargarDocentes = async () => {
     try {
       const { data } = await axios.get(
-        "/api/admin/docentes"
+        "http://localhost:4000/api/admin/docentes"
       );
       setDocentes(data || []);
       setError("");
@@ -90,7 +90,7 @@ export default function DocentesAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `/api/admin/docentes/${editing}`,
+        `http://localhost:4000/api/admin/docentes/${editing}`,
         form
       );
 
@@ -119,7 +119,7 @@ export default function DocentesAdmin() {
     if (!confirmDelete) return;
     try {
       await axios.delete(
-        `/api/admin/docentes/${confirmDelete.docente_id}`
+        `http://localhost:4000/api/admin/docentes/${confirmDelete.docente_id}`
       );
 
       setDocentes((prev) =>
@@ -160,7 +160,7 @@ export default function DocentesAdmin() {
     }
 
     try {
-      await axios.post("/api/admin/docentes", {
+      await axios.post("http://localhost:4000/api/admin/docentes", {
         nombre: createForm.nombre,
         apellido: createForm.apellido,
         correo: createForm.correo,

@@ -58,7 +58,7 @@ export default function PerfilDocente() {
     const fetchData = async () => {
       try {
         const res = await axios.post(
-          "/api/docente/datos",
+          "http://localhost:4000/api/docente/datos",
           { correo },
           getAuthHeaders()
         );
@@ -118,7 +118,7 @@ export default function PerfilDocente() {
 
     try {
       await axios.put(
-        "/api/docente/actualizar",
+        "http://localhost:4000/api/docente/actualizar",
         docente,
         getAuthHeaders()
       );
@@ -162,7 +162,7 @@ export default function PerfilDocente() {
 
     try {
       await axios.put(
-        "/api/docente/password",
+        "http://localhost:4000/api/docente/password",
         {
           docente_id: docente.docente_id,
           password_actual: passwordActual,

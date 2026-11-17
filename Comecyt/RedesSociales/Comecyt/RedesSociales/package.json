@@ -8,13 +8,12 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:backend": "npm --prefix ../../../Backend run dev",
+    "dev:backend": "cd ../Backend && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\""
   },
   "dependencies": {
     "@splinetool/react-spline": "^2.2.6",
     "axios": "^1.12.2",
-    "canvas-confetti": "^1.9.4",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.544.0",
     "react": "18.3.1",

@@ -1,4 +1,3 @@
-import { limpiarSesion } from "./context/limpiarSesion"
 // src/main.jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -9,7 +8,7 @@ import axios from 'axios'
 import './index.css'
 
 // ✅ Configurar axios globalmente
-const API_URL = import.meta.env.VITE_API_URL || ''
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 axios.defaults.baseURL = API_URL
 
 // ✅ PARCHE GLOBAL: Mete el token a axios al cargar la app
@@ -35,7 +34,6 @@ axios.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    if (sessionStorage.getItem("agora-vista-previa") === "1") config.headers["X-Agora-Vista-Previa"] = "1"
     return config
   },
   (error) => {
@@ -49,7 +47,7 @@ axios.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.log('🚨 Token inválido, limpiando sesión')
-      limpiarSesion()
+      localStorage.clear()
       delete axios.defaults.headers.common['Authorization']
     }
     return Promise.reject(error)

@@ -4,12 +4,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "@/Css/modulo_3_contenido_4.css";
 
-import whatsappSeguridadIntroImg from "../../assets/whatsappSeguridadIntro.png";
-import whatsappBackupImg from "../../assets/whatsappBackup.png";
-import whatsappEncryptionImg from "../../assets/whatsappEncryption.png";
-import whatsappBlockImg from "../../assets/whatsappBlock.png";
+// 🔹 Imágenes de ejemplo para los pasos (1–6)
+import whatsappRegistroPaso1 from "../../assets/whatsappRegistroPaso1.png";
+import whatsappRegistroPaso2 from "../../assets/whatsappRegistroPaso2.png";
+import whatsappRegistroPaso3 from "../../assets/whatsappRegistroPaso3.png";
+import whatsappRegistroPaso4 from "../../assets/whatsappRegistroPaso4.png";
+import whatsappRegistroPaso5 from "../../assets/whatsappRegistroPaso5.png";
+import whatsappRegistroPaso6 from "../../assets/whatsappRegistroPaso6.png";
+import whatsappComunicacionImg from "../../assets/whatsappComunicacion.png";
+import whatsappLlamadasImg from "../../assets/whatsappLlamadas.png";
+import whatsappGruposImg from "../../assets/whatsappGrupos.png";
+import whatsappEstadosImg from "../../assets/whatsappEstados.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = "http://localhost:4000";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 4;
 const TOTAL_PREGUNTAS = 6;
@@ -202,7 +209,7 @@ export default function ContenidoWhatsappSeguridad() {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/3/contenido/3");
+    navigate("/modulo/3/contenido/17"); // ✅ Va al contenido 17 del módulo 3
   };
 
   // ✅ CAMBIO 3: irSiguiente con fix para último contenido

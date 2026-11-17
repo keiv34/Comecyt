@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.npm-cache/
-.env
-.env.*
-!.env.example
-/Comecyt/Backend/Certificados/Constancia_AGORA_*.pdf

@@ -6,7 +6,7 @@ import { Trophy, XCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import '@/Css/modulo_5_contenido_15.css';
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const MODULO_ID = 5;
 const NUM_CONTENIDO = 15;
 const TIEMPO_JUEGO = 120;
@@ -149,7 +149,7 @@ const Modulo5Contenido15 = () => {
             );
             if (response.data?.success) {
                 window.scrollTo(0, 0);
-                navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
+                navigate(`/modulo/${MODULO_ID}`);
             } else {
                 alert('Error al guardar progreso. Intenta de nuevo.');
             }

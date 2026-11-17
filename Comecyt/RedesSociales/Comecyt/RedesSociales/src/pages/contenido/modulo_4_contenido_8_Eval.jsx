@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_4_contenido_8_Eval.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = "http://localhost:4000";
 const MODULO_ID = 4;
 const NUM_CONTENIDO = 8;
 const EVALUACION_ID = 4;
@@ -12,7 +12,7 @@ const MAX_INTENTOS = 2;
 const TOTAL_PREGUNTAS = 15;
 const APROBADO_MIN_PERCENT = 70;
 
-export default function ExamenInstagramModulo4({ onComplete }) {
+export default function ExamenInstagramModulo4() {
   const navigate = useNavigate();
   const [progresoCargado, setProgresoCargado] = useState(false);
   const [guardando, setGuardando] = useState(false);
@@ -40,6 +40,8 @@ export default function ExamenInstagramModulo4({ onComplete }) {
   const [progreso, setProgreso] = useState(0);
 
   // ✅ CAMBIO 1: States nuevos para el fix
+  const [totalContenidos, setTotalContenidos] = useState(29);
+  const [modulos, setModulos] = useState([]);
 
   useEffect(() => {
     console.log("🔥 SÍ ENTRA AL COMPONENTE Contenido29 - Examen Final");
@@ -70,6 +72,7 @@ export default function ExamenInstagramModulo4({ onComplete }) {
     q15: "2faCapaExtra",
   };
 
+  // ✅ CAMBIO 2: useEffect modificado con setModulos y setTotalContenidos
   useEffect(() => {
     const cargarEstado = async () => {
       try {
@@ -85,9 +88,11 @@ export default function ExamenInstagramModulo4({ onComplete }) {
           { correo }
         );
         const modulosData = respProgreso.data.modulos || [];
+        setModulos(modulosData); // 👈 NUEVO
 
         const modulo = modulosData.find((m) => m.modulo_id === MODULO_ID);
         if (modulo) {
+          setTotalContenidos(modulo.total_contenidos); // 👈 NUEVO
           const p = Number(modulo?.progreso_actual ?? 0);
           setProgreso(p);
 
@@ -111,7 +116,7 @@ export default function ExamenInstagramModulo4({ onComplete }) {
         setAprobado(!!data.aprobado);
 
         if (data.aprobado) {
-          setEstadoMsg("✅ Ya aprobaste este examen. Puedes completar el módulo.");
+          setEstadoMsg("✅ Ya aprobaste este examen. Puedes generar tu certificado.");
         } else if (data.intentos >= MAX_INTENTOS) {
           setEstadoMsg("❌ Has agotado tus intentos. Debes repasar el contenido.");
         } else {
@@ -207,7 +212,7 @@ export default function ExamenInstagramModulo4({ onComplete }) {
     try {
       const correo = localStorage.getItem("correo");
       const { data } = await axios.post(
-        `${API_URL}/api/alumno/evaluacion/resultado`,
+        `${API_URL}/api/alumno/evaluacion/guardar`,
         {
           correo,
           evaluacion_id: EVALUACION_ID,
@@ -221,7 +226,7 @@ export default function ExamenInstagramModulo4({ onComplete }) {
 
       if (data.aprobado) {
         setEstadoMsg("🎉 ¡Examen aprobado!");
-        showToast("Examen aprobado. Ya puedes completar el módulo.", "success");
+        showToast("Examen aprobado. Ya puedes generar tu certificado.", "success");
       } else {
         showToast("Examen registrado. Puedes intentar de nuevo.", "info");
       }
@@ -236,14 +241,35 @@ export default function ExamenInstagramModulo4({ onComplete }) {
   // 🔙 Anterior
   const irAnterior = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    navigate("/modulo/4/contenido/7");
+    navigate("/modulo/1/contenido/28"); // ✅ Va al contenido 28
   };
 
-  const finalizarModulo = async () => {
+  // ✅ CAMBIO 3: Función generarCertificado con guard y states
+  const generarCertificado = async () => {
     if (!aprobado) return;
+
     setGuardando(true);
     try {
-      if (await onComplete()) showToast("Módulo completado.", "success");
+      // Si es el último contenido del módulo, marcamos el módulo como completado
+      const correo = localStorage.getItem("correo");
+      if (NUM_CONTENIDO >= totalContenidos && correo) {
+        console.log('✅ Módulo completado al aprobar examen');
+
+        // Actualizar progreso al máximo
+        await axios.post(
+          `${API_URL}/api/alumno/progreso/actualizar`,
+          {
+            correo,
+            modulo_id: MODULO_ID,
+            progreso_actual: NUM_CONTENIDO,
+          }
+        );
+      }
+
+      navigate("/generar-certificado");
+    } catch (err) {
+      console.error("Error al marcar módulo completado:", err);
+      navigate("/generar-certificado"); // Aún así navegamos
     } finally {
       setGuardando(false);
     }
@@ -267,6 +293,40 @@ export default function ExamenInstagramModulo4({ onComplete }) {
   }
 
 
+
+  const finalizarContenido = async () => {
+    if (!puedeAvanzar) return;
+    setGuardando(true);
+    const correo = localStorage.getItem("correo");
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/alumno/progreso/actualizar`,
+        { correo, modulo_id: MODULO_ID, progreso_actual: NUM_CONTENIDO },
+        token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+      );
+
+      if (response.data?.success) {
+        window.scrollTo(0, 0);
+        // si es el último contenido, vuelve al inicio
+        if (NUM_CONTENIDO >= totalContenidos) {
+          navigate("/inicio");
+        } else {
+          navigate(`/modulo/${MODULO_ID}/contenido/${NUM_CONTENIDO + 1}`);
+        }
+      } else {
+        setToast('Error al guardar progreso. Intenta de nuevo.');
+        setTimeout(() => setToast(""), 3000);
+      }
+    } catch (err) {
+      console.error("❌ Error al guardar:", err.response?.data || err);
+      setToast('Error de conexión al guardar progreso');
+      setTimeout(() => setToast(""), 3000);
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   return (
     <div className="igFinal-container">
@@ -607,7 +667,7 @@ export default function ExamenInstagramModulo4({ onComplete }) {
         <div className="avance-mensaje">
           <p>✅ Este es el último contenido del Módulo 1.</p>
           {aprobado && (
-            <p>Completa el módulo para obtener tu constancia.</p>
+            <p>🎓 Ya puedes generar tu certificado de aprobación.</p>
           )}
         </div>
 
@@ -615,10 +675,10 @@ export default function ExamenInstagramModulo4({ onComplete }) {
           <button className="btn-anterior" onClick={irAnterior}>← Anterior</button>
           <button
             className={`btn-siguiente ${!aprobado || guardando ? "btn-siguiente-locked" : ""}`}
-            onClick={finalizarModulo}
-            disabled={guardando || !aprobado}
+            onClick={finalizarContenido}
+            disabled={guardando || !puedeAvanzar}
           >
-            {guardando ? "Guardando..." : "Completar módulo"}
+            {guardando ? "Guardando..." : aprobado ? "🎓 Generar Certificado" : "Certificado 🔒"}
           </button>
         </div>
       </footer>
