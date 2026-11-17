@@ -15,7 +15,7 @@ import wBusinessPaso5 from "../../assets/wBusinessPaso5.jpg";
 import wBusinessPaso6 from "../../assets/wBusinessPaso6.png";
 import wBusinessPaso7 from "../../assets/wBusinessPaso7.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 5;
 const TOTAL_PREGUNTAS = 6;

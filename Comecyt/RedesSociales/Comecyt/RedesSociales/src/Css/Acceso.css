@@ -89,6 +89,7 @@
 .acceso-agora__registro { justify-self: start; padding: 8px 0; }
 .acceso-agora__alerta { display: flex; align-items: flex-start; gap: 9px; padding: 11px 12px; border: 1px solid #e1a9a0; border-radius: 9px; background: #fff0ed; color: #792b22; line-height: 1.45; overflow-wrap: anywhere; }
 .acceso-agora__alerta svg { flex: 0 0 auto; margin-top: 1px; }
+.acceso-agora__alerta--exito { margin-bottom: 12px; border-color: #a6c9b3; background: #edf6ee; color: #22513d; }
 .acceso-agora__pie { display: flex; flex-wrap: wrap; gap: 0 18px; margin-top: 22px; border-top: 1px solid var(--borde); padding-top: 8px; }
 .acceso-agora a { color: var(--verde); font-weight: 600; text-underline-offset: 3px; }
 .acceso-agora__pie a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: .86rem; }

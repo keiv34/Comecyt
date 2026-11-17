@@ -10,7 +10,7 @@ function DudasWhatsApp() {
     const [error, setError] = useState('');
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const API_URL = import.meta.env.VITE_API_URL || '';
 
     const cargarDudas = async () => {
         try {
@@ -60,12 +60,12 @@ function DudasWhatsApp() {
 
     return (
         <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '30px' }}>
                 <h1>📱 Panel Dudas WhatsApp</h1>
                 <button onClick={() => { logout(); navigate('/login'); }} style={{ background: '#ff4444', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Cerrar Sesión</button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '15px', marginBottom: '30px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 130px), 1fr))', gap: '15px', marginBottom: '30px' }}>
                 <div style={{ background: '#2196F3', color: 'white', padding: '20px', textAlign: 'center', borderRadius: '8px' }}>
                     <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{stats.total}</div>
                     <div>Total</div>
@@ -84,11 +84,12 @@ function DudasWhatsApp() {
                 </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
                 <h2>Mensajes Recientes</h2>
                 <button onClick={cargarDudas} style={{ background: '#2196F3', color: 'white', padding: '8px 16px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>🔄 Actualizar</button>
             </div>
 
+            <div role="region" aria-label="Mensajes recientes" tabIndex={0} style={{ overflowX: "auto" }}>
             <table style={{ width: '100%', background: 'white', borderCollapse: 'collapse', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                 <thead>
                     <tr style={{ background: '#2E7D32', color: 'white' }}>
@@ -128,6 +129,7 @@ function DudasWhatsApp() {
                     ))}
                 </tbody>
             </table>
+            </div>
 
             {dudas.length === 0 && !cargando && (
                 <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No hay dudas registradas</div>

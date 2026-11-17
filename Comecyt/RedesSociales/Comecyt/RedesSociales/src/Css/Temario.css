@@ -59,4 +59,18 @@
 
 .tema-nombre {
   flex: 1;
+}.temario-container .tema-item {
+  width: 100%;
+  border: 0;
+  font: inherit;
+  text-align: left;
+}
+.tema-icono { display: inline-flex; flex-shrink: 0; }
+.tema-nombre { min-width: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 700px) {
+  .temario-container { padding: 24px 12px; }
+  .temario-container .modulo-card { padding: 14px; }
+  .temario-container .tema-item { padding: 10px; gap: 8px; min-height: 44px; }
+  .temario-container .check-text { font-size: .75rem; }
 }

@@ -8,7 +8,7 @@ const DudasWhatsapp = () => {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState('');
 
-    const API_URL = 'http://localhost:4000/api/dudas';
+    const API_URL = `${import.meta.env.VITE_API_URL || ""}/api/dudas`;
 
     const cargarDudas = async () => {
         try {

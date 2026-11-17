@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useGuardarProgreso } from "../hooks/useGuardarProgreso";
 import { MODULOS } from "../curso/catalogo";
 import { Toaster } from "react-hot-toast";
+import DescargarConstancia from "../Components/common/DescargarConstancia";
 
 const archivos = import.meta.glob("./contenido/*.jsx");
 const archivosDelCurso = new Set(MODULOS.flatMap(modulo => modulo.temas.map(tema => tema.archivo)));
@@ -68,8 +69,13 @@ function Leccion({ modulo, tema }) {
             <Toaster position="top-center" />
             {acceso.vistaPrevia && <p role="status" style={{ textAlign: "center" }}>Vista previa · El avance y los intentos de esta sesión no se guardan.</p>}
             <Suspense fallback={<div>Cargando lección...</div>}>
-                <Componente onComplete={manejarRetoCompletado} navigate={navigate} moduloId={moduloId} numContenido={numContenido} tituloModulo={modulo.titulo} />
+                <Componente onComplete={manejarRetoCompletado} navigate={navigate} moduloId={moduloId} numContenido={numContenido} numeroModulo={modulo.numero} tituloModulo={modulo.titulo} vistaPrevia={acceso.vistaPrevia} />
             </Suspense>
+            {esUltimaLeccion && temaCompletado && !acceso.vistaPrevia && (
+                <div style={{ display: "grid", justifyContent: "center", marginTop: 24 }}>
+                    <DescargarConstancia moduloId={moduloId} />
+                </div>
+            )}
 
             {(temaCompletado || acceso.vistaPrevia) && (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>

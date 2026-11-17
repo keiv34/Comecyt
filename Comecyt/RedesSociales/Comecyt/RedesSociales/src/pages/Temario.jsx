@@ -72,7 +72,7 @@ function Temario() {
 
       {MODULOS.map(seccion => (
         <div key={seccion.id} className="modulo-card">
-          <h2 className="modulo-titulo">{seccion.icono} {seccion.id}. {seccion.titulo}</h2>
+          <h2 className="modulo-titulo">{seccion.icono} {seccion.numero}. {seccion.titulo}</h2>
           {modulosVistaPrevia.includes(seccion.id) && <p>Vista previa · Todas las lecciones disponibles</p>}
           <div className="temas-lista">
             {seccion.temas.map((tema) => {
@@ -80,7 +80,9 @@ function Temario() {
               const bloqueado = estaBloqueado(seccion.moduloId, tema.contenidoId);
 
               return (
-                <div
+                <button
+                  type="button"
+                  disabled={bloqueado}
                   key={tema.contenidoId}
                   className={`tema-item ${bloqueado ? 'bloqueado' : 'disponible'} ${completado ? 'completado' : ''}`}
                   onClick={() => handleClick(tema, seccion.moduloId)}
@@ -99,7 +101,7 @@ function Temario() {
                   </span>
                   {completado && <span className="check-text">Completado</span>}
                   {bloqueado && <span className="check-text">Bloqueado</span>}
-                </div>
+                </button>
               );
             })}
           </div>

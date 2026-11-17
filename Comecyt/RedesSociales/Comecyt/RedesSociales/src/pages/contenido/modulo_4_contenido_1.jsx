@@ -7,7 +7,7 @@ import "../../Css/modulo_4_contenido_1.css";
 import igIntroImg from "../../assets/igIntro.png";
 import igPopularidadImg from "../../assets/igPopularidad.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 1;
 const TOTAL_PREGUNTAS = 6;

@@ -9,7 +9,7 @@ import whatsappBackupImg from "../../assets/whatsappBackup.png";
 import whatsappEncryptionImg from "../../assets/whatsappEncryption.png";
 import whatsappBlockImg from "../../assets/whatsappBlock.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 4;
 const TOTAL_PREGUNTAS = 6;

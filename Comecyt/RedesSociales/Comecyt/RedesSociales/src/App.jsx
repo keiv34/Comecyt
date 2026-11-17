@@ -60,7 +60,7 @@ function App() {
           <Routes>
             <Route path="/registro" element={<Registro />} />
             <Route path="/login" element={<Acceso />} />
-            <Route path="/" element={<Acceso />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
             {/* ✅ RUTA NUEVA - PANEL WHATSAPP INDEPENDIENTE */}
             <Route path="/whatsapp-panel" element={<DudasWhatsApp />} />

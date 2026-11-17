@@ -1,6 +1,7 @@
 import catalogo from "./catalogo.json";
 
-export const MODULOS = catalogo.map(modulo => ({
+export const MODULOS = catalogo.map((modulo, index) => ({
+  numero: index + 1,
   ...modulo,
   moduloId: modulo.id,
   nombre: modulo.titulo,

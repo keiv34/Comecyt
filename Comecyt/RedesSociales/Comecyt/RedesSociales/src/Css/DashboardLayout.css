@@ -166,3 +166,10 @@
     .dashboard-layout .nav-item { white-space: nowrap; padding: 10px 8px; }
     .dashboard-layout .sidebar-whatsapp { display: none; }
 }
+.dashboard-layout .dashboard-content { width: 100%; }
+.dashboard-layout .modulo-dinamico-wrapper :is(img, video, iframe) { max-width: 100%; }
+@media (max-width: 700px) {
+  .dashboard-layout .sidebar-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard-layout .nav-item { min-height: 44px; white-space: normal; }
+  .dashboard-layout .nav-item svg { flex-shrink: 0; }
+}

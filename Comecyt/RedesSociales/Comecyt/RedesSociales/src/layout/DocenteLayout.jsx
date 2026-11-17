@@ -1,6 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import "../Css/DocenteLayout.css";
 
 function DocenteLayout() {
   const navigate = useNavigate();
@@ -36,9 +37,9 @@ function DocenteLayout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a3d2e" }}>
+    <div className={`docente-layout${sidebarOpen ? "" : " docente-layout--compacto"}`} style={{ display: "flex", minHeight: "100vh", background: "#0a3d2e" }}>
       {/* SIDEBAR */}
-      <aside
+      <aside className="docente-layout__sidebar"
         style={{
           width: sidebarOpen ? "260px" : "80px",
           background: "#0f5742",
@@ -66,6 +67,9 @@ function DocenteLayout() {
             </div>
           )}
           <button
+            className="docente-layout__alternar"
+            aria-label={sidebarOpen ? "Contraer menú" : "Expandir menú"}
+            aria-expanded={sidebarOpen}
             onClick={() => setSidebarOpen(!sidebarOpen)}
             style={{
               background: "transparent",
@@ -82,6 +86,8 @@ function DocenteLayout() {
         <nav style={{ flex: 1, padding: "20px 0" }}>
           {menuItems.map((item) => (
             <Link
+              aria-label={item.label}
+              aria-current={isActive(item.path) ? "page" : undefined}
               key={item.path}
               to={item.path}
               style={{
@@ -98,13 +104,13 @@ function DocenteLayout() {
               }}
             >
               <span style={{ fontSize: "20px" }}>{item.icon}</span>
-              {sidebarOpen && <span>{item.label}</span>}
+              <span className="docente-layout__etiqueta">{item.label}</span>
             </Link>
           ))}
         </nav>
 
         {sidebarOpen && (
-          <div style={{ padding: "0 20px 10px" }}>
+          <div className="docente-layout__ayuda" style={{ padding: "0 20px 10px" }}>
             <a
               href="https://wa.me/527121265349"
               target="_blank"
@@ -128,9 +134,10 @@ function DocenteLayout() {
           </div>
         )}
 
-        <div style={{ padding: "20px", borderTop: "1px solid #00ffaa" }}>
+        <div className="docente-layout__salir" style={{ padding: "20px", borderTop: "1px solid #00ffaa" }}>
           <button
             onClick={handleLogout}
+            aria-label="Cerrar sesión"
             style={{
               width: "100%",
               padding: "12px",
@@ -152,7 +159,7 @@ function DocenteLayout() {
         </div>
       </aside>
 
-      <div
+      <div className="docente-layout__cuerpo"
         style={{
           marginLeft: sidebarOpen ? "260px" : "80px",
           flex: 1,
@@ -162,7 +169,7 @@ function DocenteLayout() {
           background: "#0a3d2e",
         }}
       >
-        <header style={{
+        <header className="docente-layout__cabecera" style={{
           background: "#0f5742",
           padding: "15px 30px",
           display: "flex",
@@ -177,7 +184,10 @@ function DocenteLayout() {
           </div>
 
           <div style={{ position: "relative" }} ref={menuRef}>
-            <div
+            <button type="button"
+              className="docente-layout__perfil"
+              aria-label="Opciones de perfil"
+              aria-expanded={menuPerfilOpen}
               onClick={() => setMenuPerfilOpen(!menuPerfilOpen)}
               style={{
                 display: "flex",
@@ -187,7 +197,7 @@ function DocenteLayout() {
               }}
             >
               <span style={{ color: "white", fontSize: "14px" }}>{user?.correo}</span>
-              <div style={{
+              <span style={{
                 width: "40px",
                 height: "40px",
                 borderRadius: "50%",
@@ -199,8 +209,8 @@ function DocenteLayout() {
                 color: "#0a3d2e",
               }}>
                 👤
-              </div>
-            </div>
+              </span>
+            </button>
 
             {menuPerfilOpen && (
               <div style={{
@@ -245,7 +255,7 @@ function DocenteLayout() {
           </div>
         </header>
 
-        <main style={{ padding: "20px", flex: 1 }}>
+        <main className="docente-layout__contenido" style={{ padding: "20px", flex: 1 }}>
           <Outlet />
         </main>
       </div>

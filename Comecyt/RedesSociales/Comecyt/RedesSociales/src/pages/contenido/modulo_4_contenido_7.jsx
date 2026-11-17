@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../Css/modulo_4_contenido_7.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 7;
 const TOTAL_PREGUNTAS = 6;

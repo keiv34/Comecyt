@@ -14,3 +14,35 @@
   padding: 20px;
   background: #f5f7fa;
 }
+.admin-sidebar { flex-shrink: 0; }
+.admin-content { min-width: 0; }
+.admin-content :is(.tabla-wrapper, .tabla-scroll, .table-card) { max-width: 100%; overflow-x: auto; }
+.admin-topbar__perfil {
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.admin-topbar .user-info > span { overflow-wrap: anywhere; }
+.admin-topbar .dropdown-menu a {
+  display: block;
+  padding: 10px 14px;
+  color: #112031;
+  text-decoration: none;
+}
+.admin-topbar .dropdown-menu button { min-height: 44px; }
+
+@media (max-width: 900px) {
+  .admin-layout { min-height: 100dvh; height: auto; }
+  .admin-body { flex-direction: column; }
+  .admin-layout .admin-topbar { gap: 12px; padding: 10px 14px; }
+  .admin-layout .admin-sidebar { width: 100%; padding: 0; }
+  .admin-layout .admin-sidebar ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-layout .admin-sidebar li { margin: 0; }
+  .admin-layout .admin-sidebar a { display: flex; align-items: center; min-height: 44px; padding: 8px 14px; }
+  .admin-layout .admin-sidebar a.active { background: #28435c; }
+  .admin-layout .admin-content { padding: 12px; }
+}

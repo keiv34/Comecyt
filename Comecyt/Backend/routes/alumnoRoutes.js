@@ -30,7 +30,7 @@ router.get(
   obtenerContenidosCompletados
 );
 router.post("/datos", obtenerDatosAlumno);
-router.post("/certificados", obtenerCertificadosAlumno);
+router.post("/certificados", verifyToken, obtenerCertificadosAlumno);
 
 // ✅ RUTA: Validar y obtener contenido con bloqueo secuencial
 router.get("/modulo/:modulo_id/contenido/:numero", verifyToken, obtenerLeccion);

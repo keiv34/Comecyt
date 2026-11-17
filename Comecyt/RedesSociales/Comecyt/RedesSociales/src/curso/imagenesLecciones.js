@@ -56,7 +56,10 @@ const ilustraciones = {
 };
 
 export function imagenLeccion(moduloId, numero) {
-  const { url, columnas, descripciones } = ilustraciones[moduloId];
+  const ilustracion = ilustraciones[moduloId];
+  if (!ilustracion) return null;
+
+  const { url, columnas, descripciones } = ilustracion;
   return {
     url,
     columnas,

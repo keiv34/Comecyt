@@ -150,7 +150,7 @@ router.get('/dashboard/modulos', async (req, res) => {
       WHERE completadas > 0
       GROUP BY modulo_id
     ) p ON p.modulo_id = m.modulo_id
-    ORDER BY m.modulo_id
+    ORDER BY (m.modulo_id = 5), m.modulo_id
   `);
   res.json(modulos.map(modulo => ({ ...modulo, progreso_promedio: Number(modulo.progreso_promedio) })));
 });

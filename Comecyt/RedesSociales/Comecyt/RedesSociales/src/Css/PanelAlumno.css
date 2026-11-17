@@ -277,3 +277,6 @@ img.panel-alumno__avatar {
 }
 
 @media(max-width:480px){.panel-alumno{gap:16px}.panel-alumno__resumen{grid-template-columns:1fr}.panel-alumno__portada{border-radius:12px}}
+.panel-alumno { grid-template-columns: minmax(0, 1fr); }
+.panel-alumno__formulario { grid-template-columns: minmax(0, 1fr); }
+.panel-alumno__formulario :is(input, select) { min-width: 0; width: 100%; font-size: 16px; }

@@ -1,7 +1,8 @@
 import { pool } from "../config/database.js";
 import { normalizarAvance } from "../services/avance.js";
-import { idEnConflicto } from "../services/catalogo.js";
-import { MINIMO_APROBACION, evaluacionGuiada, buscarEvaluacionGuiada, mejorPuntaje, modulosVistaPrevia } from "../services/evaluacionesGuiadas.js";
+import { modulosAprobados } from "../services/acreditacion.js";
+import { catalogo, idEnConflicto } from "../services/catalogo.js";
+import { modulosVistaPrevia } from "../services/evaluacionesGuiadas.js";
 
 const MENSAJE_CONFLICTO = "El catálogo de MySQL requiere revisión antes de continuar.";
 
@@ -13,22 +14,25 @@ export async function consultarProgreso(req, res) {
   const { correo } = req.user;
   if (!correo) return res.status(403).json({ error: "La sesión no tiene correo" });
 
-  const [catalogo] = await pool.query(`
+  const [modulosDb] = await pool.query(`
     SELECT m.modulo_id, m.titulo, m.descripcion, m.total_contenidos,
            COALESCE(p.progreso_actual, 0) AS progreso_guardado
     FROM MODULO m
     LEFT JOIN progreso_modulos p ON p.modulo_id = m.modulo_id AND p.correo = ?
-    ORDER BY m.modulo_id
   `, [correo]);
-  if (catalogo.some(modulo => idEnConflicto(modulo.modulo_id, modulo.titulo))) {
+  if (modulosDb.some(modulo => idEnConflicto(modulo.modulo_id, modulo.titulo))) {
     return res.status(409).json({ error: MENSAJE_CONFLICTO });
   }
   const [registros] = await pool.query(
     "SELECT modulo_id, contenido_id FROM contenidos_completados WHERE correo = ?", [correo]
   );
+  const [[alumno]] = await pool.query("SELECT alumno_id FROM ALUMNO WHERE correo = ?", [correo]);
+  const aprobados = alumno ? await modulosAprobados(pool, alumno.alumno_id) : new Set();
 
   const contenidosCompletados = [];
-  const modulos = catalogo.map(({ progreso_guardado, ...modulo }) => {
+  const orden = new Map(catalogo.map(({ id }, index) => [id, index]));
+  modulosDb.sort((a, b) => (orden.get(a.modulo_id) ?? Infinity) - (orden.get(b.modulo_id) ?? Infinity) || a.modulo_id - b.modulo_id);
+  const modulos = modulosDb.map(({ progreso_guardado, ...modulo }) => {
     const lecciones = normalizarAvance(
       registros.filter(registro => registro.modulo_id === modulo.modulo_id).map(registro => registro.contenido_id),
       progreso_guardado,
@@ -43,6 +47,7 @@ export async function consultarProgreso(req, res) {
     return {
       ...modulo,
       progreso_actual,
+      constancia_disponible: progreso_actual === modulo.total_contenidos && aprobados.has(modulo.modulo_id),
       porcentaje: calcularPorcentaje(progreso_actual, modulo.total_contenidos),
       siguiente_numero: siguiente_numero <= modulo.total_contenidos ? siguiente_numero : null
     };
@@ -56,10 +61,10 @@ export async function consultarProgreso(req, res) {
     total_contenidos: total,
     porcentaje_general: calcularPorcentaje(contenidosCompletados.length, total)
   };
-  return res.json({ modulos, contenidosCompletados, estadisticas, modulos_vista_previa: modulosVistaPrevia(req.user) });
+  return res.json({ modulos, contenidosCompletados, estadisticas, modulos_vista_previa: modulosVistaPrevia(req) });
 }
 
-async function cargarAvance(db, correo, moduloId, total) {
+export async function cargarAvance(db, correo, moduloId, total) {
   const [registros] = await db.query(
     "SELECT contenido_id FROM contenidos_completados WHERE correo = ? AND modulo_id = ?", [correo, moduloId]
   );
@@ -83,7 +88,7 @@ export async function obtenerLeccion(req, res) {
     return res.status(409).json({ error: MENSAJE_CONFLICTO });
   }
 
-  const vista_previa = modulosVistaPrevia(req.user).includes(leccion.modulo_id);
+  const vista_previa = modulosVistaPrevia(req).includes(leccion.modulo_id);
   if (!vista_previa && leccion.numero > 1) {
     const completadas = await cargarAvance(pool, correo, leccion.modulo_id, leccion.total_contenidos);
     if (!completadas.has(leccion.numero) && !completadas.has(leccion.numero - 1)) {
@@ -123,7 +128,7 @@ export async function guardarAvance(req, res) {
     }
 
     const completadas = await cargarAvance(db, correo, moduloId, modulo.total_contenidos);
-    if (modulosVistaPrevia(req.user).includes(moduloId)) {
+    if (modulosVistaPrevia(req).includes(moduloId)) {
       return res.json({
         success: true,
         progreso_actual: completadas.size,
@@ -135,13 +140,9 @@ export async function guardarAvance(req, res) {
       return res.status(403).json({ error: "Completa la lección anterior primero" });
     }
 
-    const examen = evaluacionGuiada(moduloId);
-    if (examen?.numero === numero) {
-      const evaluacionId = await buscarEvaluacionGuiada(db, examen);
-      const puntaje = evaluacionId ? await mejorPuntaje(db, alumno.alumno_id, evaluacionId) : null;
-      if (puntaje === null || puntaje < MINIMO_APROBACION) {
-        return res.status(403).json({ error: "Aprueba la evaluación final primero." });
-      }
+    const leccionCatalogo = catalogo.find(item => item.id === moduloId)?.lecciones[numero - 1];
+    if (leccionCatalogo?.evaluacion && !(await modulosAprobados(db, alumno.alumno_id)).has(moduloId)) {
+      return res.status(403).json({ error: "Aprueba la evaluación final primero." });
     }
 
     completadas.add(numero);

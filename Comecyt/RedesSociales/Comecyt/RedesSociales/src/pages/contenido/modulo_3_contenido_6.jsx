@@ -10,7 +10,7 @@ import ImagenEtiquetasImg from "../../assets/ImagenEtiquetas.png";
 import ImagenEstadisticasImg from "../../assets/ImagenEstadisticas.png";
 import ImagenCatalogoImg from "../../assets/ImagenCatalogo.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 6;
 const TOTAL_PREGUNTAS = 6;

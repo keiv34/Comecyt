@@ -19,7 +19,7 @@ import paso10Img from "../../assets/paso10.png";
 
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 2;
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export default function ContenidoCrearCorreoGmail() {
   // 👉 Quiz

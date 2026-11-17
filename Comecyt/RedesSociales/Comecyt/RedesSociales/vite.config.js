@@ -6,9 +6,19 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// https://vite.dev/config/
+const apiProxy = Object.fromEntries(
+  ["/api", "/avatars", "/certificados"].map(route => [route, "http://localhost:4000"])
+)
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: 'localhost',
+    port: 5173,
+    strictPort: false,
+    open: '/login',
+    proxy: apiProxy,
+  },
+  preview: { proxy: apiProxy },
   resolve: {
     dedupe: ['react', 'react-dom'], // 👈 Evita duplicar React
     alias: {

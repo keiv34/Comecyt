@@ -13,6 +13,11 @@ export const leccionesSeguridadDigital = [
         "Información que debes proteger",
         "El domicilio, el teléfono y la CURP identifican a una persona. Comparte solo lo necesario con destinatarios verificados.",
         "El NIP, las contraseñas y los códigos de acceso son confidenciales. Guarda documentos, fotografías privadas y datos de tarjetas en lugares protegidos."
+      ],
+      [
+        "Clasifica los datos según quién puede verlos",
+        "Un taller prepara un cartel público, una lista de asistencia para el equipo y un archivo con datos de contacto. El cartel puede circular. El equipo necesita la lista y la persona responsable del seguimiento necesita los datos de contacto.",
+        "Clasifica tres archivos de un proyecto ficticio. Anota quién necesita cada uno y cómo limitarías el acceso al resto."
       ]
     ],
     "caso": {
@@ -39,6 +44,11 @@ export const leccionesSeguridadDigital = [
         "Programas maliciosos y señales de alerta",
         "El malware puede dañar archivos o robar datos. El ransomware es un tipo de malware que cifra o bloquea archivos y exige un rescate.",
         "Desconfía de archivos inesperados, amenazas de bloqueo, premios que no solicitaste y peticiones de contraseñas, códigos o acceso remoto."
+      ],
+      [
+        "Comprueba una alerta desde un canal conocido",
+        "Recibes un SMS sobre un paquete con un cargo inesperado. Abre por tu cuenta el sitio o la aplicación de la empresa donde hiciste la compra y consulta el número de pedido en tu confirmación original.",
+        "Escribe qué datos puedes comprobar por separado y qué harías si el pedido aparece entregado en la aplicación."
       ]
     ],
     "video": {
@@ -75,6 +85,11 @@ export const leccionesSeguridadDigital = [
       [
         "Detente, analiza, verifica, protege y reporta",
         "Haz una pausa. Identifica qué te piden, verifica la solicitud por un canal independiente, protege tus datos y reporta el intento a la plataforma o institución."
+      ],
+      [
+        "Responde a un supuesto cambio de cuenta",
+        "Una persona que dice representar a un proveedor pide depositar en una cuenta distinta. Pausa el pago, consulta el contacto registrado previamente y pide que se confirme el cambio por ese canal. Guarda la confirmación con el pedido.",
+        "Redacta una respuesta breve para posponer el pago mientras verificas el cambio. Indica qué información registrarías al confirmarlo."
       ]
     ],
     "video": {
@@ -106,6 +121,11 @@ export const leccionesSeguridadDigital = [
         "Autenticación de dos factores",
         "Combina dos clases de comprobación, como una contraseña y una llave de seguridad o una aplicación autenticadora. Un factor puede ser algo que sabes, algo que tienes o un rasgo biométrico.",
         "Guarda los códigos de recuperación en un lugar seguro. Evita compartir códigos de verificación o aprobar solicitudes de acceso que no iniciaste."
+      ],
+      [
+        "Prepara la recuperación de tu cuenta",
+        "Antes de cambiar de teléfono, revisa que tu correo de recuperación siga vigente. Si el servicio ofrece códigos de respaldo, guárdalos en un lugar protegido al que puedas acceder si pierdes el dispositivo.",
+        "Describe cómo recuperarías una cuenta de práctica si tu teléfono quedara inutilizable. Identifica un dato de recuperación que convenga actualizar."
       ]
     ],
     "recursos": [
@@ -143,6 +163,11 @@ export const leccionesSeguridadDigital = [
         "Navegación segura",
         "HTTPS cifra la comunicación con el sitio. Una página de fraude también puede usar HTTPS, así que revisa el dominio antes de iniciar sesión.",
         "En equipos compartidos, evita guardar contraseñas y cierra la sesión al terminar."
+      ],
+      [
+        "Comprueba que tu respaldo funciona",
+        "Una copia de tus archivos escolares sirve si puedes recuperar su contenido. Con un archivo ficticio, verifica desde otro dispositivo que lo puedes abrir y que la fecha corresponde a la versión que esperabas.",
+        "Crea un archivo de prueba, haz una copia y ábrela. Anota qué archivo recuperaste y cuándo revisarías el siguiente respaldo."
       ]
     ],
     "caso": {
@@ -170,6 +195,11 @@ export const leccionesSeguridadDigital = [
         "Dónde buscar ayuda en México",
         "El banco atiende operaciones no reconocidas y puede proteger tus medios de pago. CONDUSEF orienta sobre reclamaciones financieras.",
         "Guardia Nacional CERT-MX y las unidades de Policía Cibernética pueden orientar. Consulta a la fiscalía correspondiente si necesitas presentar una denuncia."
+      ],
+      [
+        "Organiza la información para reportar un incidente",
+        "Si detectas un cargo desconocido, usa los medios oficiales de tu banco para reportarlo. Registra la hora, el monto y el folio de atención. Conserva los avisos relacionados para dar seguimiento al caso.",
+        "Prepara un registro ficticio que incluya el incidente, la medida que tomaste y el canal oficial por el que pedirías seguimiento."
       ]
     ],
     "recursos": [

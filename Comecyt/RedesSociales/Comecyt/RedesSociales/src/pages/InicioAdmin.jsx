@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../Css/InicioAdmin.css";
 
-const API_URL = "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export default function InicioAdmin() {
   const [resumen, setResumen] = useState(null);
@@ -158,6 +158,7 @@ export default function InicioAdmin() {
       {/* ✅ NUEVO: NAVBAR DE PESTAÑAS */}
       <div style={{
         display: 'flex',
+        flexWrap: 'wrap',
         gap: '10px',
         marginBottom: '20px',
         borderBottom: '2px solid #00ffaa',
@@ -281,7 +282,7 @@ export default function InicioAdmin() {
                         <td>
                           {c.nombre} {c.apellido}
                         </td>
-                        <td>{`Módulo ${c.modulo_id}`}</td>
+                        <td>{c.titulo_modulo ?? c.modulo_id}</td>
                         <td>
                           {c.fecha_emision
                             ? new Date(c.fecha_emision).toLocaleDateString()

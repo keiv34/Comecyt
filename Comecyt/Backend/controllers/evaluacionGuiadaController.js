@@ -17,7 +17,7 @@ async function obtenerContexto(req, res, next) {
   const [[alumno]] = await pool.query("SELECT alumno_id FROM ALUMNO WHERE correo = ?", [req.user.correo]);
   if (!alumno) return res.status(404).json({ error: "Alumno no encontrado." });
 
-  const vistaPrevia = modulosVistaPrevia(req.user).includes(evaluacion.moduloId);
+  const vistaPrevia = modulosVistaPrevia(req).includes(evaluacion.moduloId);
   if (!vistaPrevia) {
     const [[{ total }]] = await pool.query(
       "SELECT COUNT(*) AS total FROM contenidos_completados WHERE correo = ? AND modulo_id = ? AND contenido_id BETWEEN 1 AND ?",

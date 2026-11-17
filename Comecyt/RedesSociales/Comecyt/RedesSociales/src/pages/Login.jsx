@@ -98,7 +98,7 @@ function Login() {
         try {
             console.log("📝 Registrando usuario:", correo, "Rol:", rolSeleccionado);
 
-            const res = await axios.post('http://localhost:4000/api/auth/registrar', {
+            const res = await axios.post('/api/auth/registrar', {
                 nombre,
                 apellido,
                 correo,

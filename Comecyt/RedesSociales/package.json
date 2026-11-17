@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
+    "dev": "npm --prefix Comecyt/RedesSociales run dev --",
+    "build": "npm --prefix Comecyt/RedesSociales run build --",
+    "lint": "npm --prefix Comecyt/RedesSociales run lint --",
+    "preview": "npm --prefix Comecyt/RedesSociales run preview --",
     "dev:backend": "cd ../Backend && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\""
   },

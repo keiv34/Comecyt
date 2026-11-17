@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "../../Css/LeccionesGuiadas.css";
 
-export default function EvaluacionGuiada({ moduloId, tituloModulo, onComplete }) {
+export default function EvaluacionGuiada({ moduloId, numeroModulo, tituloModulo, onComplete, vistaPrevia }) {
   const endpoint = `/api/alumno/modulo/${moduloId}/evaluacion`;
   const { api } = useAuth();
   const [examen, setExamen] = useState(null);
@@ -32,6 +32,7 @@ export default function EvaluacionGuiada({ moduloId, tituloModulo, onComplete })
       const opciones = examen.preguntas.map((_, index) => respuestas[index]);
       const { data } = await api.post(endpoint, { respuestas: opciones });
       setResultado(data);
+      if (data.aprobado && !vistaPrevia) setCompletada(await onComplete());
     } catch (err) {
       setError(err.response?.data?.error || "No se pudo guardar el intento. Puedes enviarlo de nuevo.");
     } finally {
@@ -51,7 +52,7 @@ export default function EvaluacionGuiada({ moduloId, tituloModulo, onComplete })
   return (
     <article className="leccion-guiada">
       <header className="leccion-guiada__cabecera">
-        <p>Módulo {moduloId} · {tituloModulo}</p>
+        <p>Módulo {numeroModulo} · {tituloModulo}</p>
         <h1>Evaluación final</h1>
       </header>
 
@@ -72,7 +73,9 @@ export default function EvaluacionGuiada({ moduloId, tituloModulo, onComplete })
               <p role="status" className={`leccion-guiada__feedback${resultado.aprobado ? "" : " leccion-guiada__feedback--revisar"}`}>
                 Obtuviste {resultado.puntaje} de 100. {resultado.aprobado ? "Aprobaste la evaluación." : "Repasa las lecciones y vuelve a intentarlo."}
               </p>
-              {resultado.aprobado ? (
+              {resultado.aprobado && vistaPrevia ? (
+                <p>Evaluación de práctica. Vuelve al modo de acreditación desde Inicio para obtener la constancia.</p>
+              ) : resultado.aprobado ? (
                 <button className="leccion-guiada__boton" onClick={completar} disabled={ocupado || completada}>
                   {completada ? "Módulo completado" : ocupado ? "Guardando…" : "Completar módulo"}
                 </button>

@@ -153,78 +153,6 @@
     ]
   },
   {
-    "id": 5,
-    "titulo": "Retos Educaplay",
-    "icono": "🎮",
-    "descripcion": "Actividades prácticas y cierre del curso",
-    "lecciones": [
-      {
-        "nombre": "Reto: Sopa de letras digital",
-        "archivo": "modulo_5_contenido_1.jsx"
-      },
-      {
-        "nombre": "Reto: Crucigrama de redes sociales",
-        "archivo": "modulo_5_contenido_2.jsx"
-      },
-      {
-        "nombre": "Reto final: Memorama tecnológico",
-        "archivo": "modulo_5_contenido_3.jsx"
-      },
-      {
-        "nombre": "Reto: Correo Electrónico Experto",
-        "archivo": "modulo_5_contenido_4.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa - WhatsApp Business",
-        "archivo": "modulo_5_contenido_5.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa - Llamadas Telefónicas",
-        "archivo": "modulo_5_contenido_6.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa - SMS/Smishing",
-        "archivo": "modulo_5_contenido_7.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa - Extorsión Telefónica",
-        "archivo": "modulo_5_contenido_8.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa - Premios Falsos",
-        "archivo": "modulo_5_contenido_9.jsx"
-      },
-      {
-        "nombre": "Reto: Crucigrama - Ciberseguridad",
-        "archivo": "modulo_5_contenido_10.jsx"
-      },
-      {
-        "nombre": "Reto final: Memorama Tecnológico 2",
-        "archivo": "modulo_5_contenido_11.jsx"
-      },
-      {
-        "nombre": "Reto: Sopa de letras - Seguridad Avanzada",
-        "archivo": "modulo_5_contenido_12.jsx"
-      },
-      {
-        "nombre": "Reto: Simulador Telefónico - Anti-Vishing",
-        "archivo": "modulo_5_contenido_13.jsx"
-      },
-      {
-        "nombre": "Reto: Blindaje de Cuenta - WhatsApp Seguro",
-        "archivo": "modulo_5_contenido_14.jsx"
-      },
-      {
-        "nombre": "Reto final: Reclutamiento Seguro - Anti-JobScams",
-        "archivo": "modulo_5_contenido_15.jsx"
-      },
-      {
-        "nombre": "Cierre del curso",
-        "archivo": "modulo_5_contenido_16.jsx"
-      }
-    ]
-  },
-  {
     "id": 6,
     "titulo": "Cobros Digitales y Finanzas",
     "icono": "💳",
@@ -232,28 +160,29 @@
     "lecciones": [
       {
         "nombre": "Introducción a los Cobros Digitales y SPEI",
-        "archivo": "modulo_6_contenido_1.jsx"
+        "archivo": "leccionGuiada.jsx"
       },
       {
         "nombre": "Métodos y Plataformas de Pago Digitales",
-        "archivo": "modulo_6_contenido_2.jsx"
+        "archivo": "leccionGuiada.jsx"
       },
       {
         "nombre": "Envíos de Dinero, Links de Cobro y Códigos QR",
-        "archivo": "modulo_6_contenido_3.jsx"
+        "archivo": "leccionGuiada.jsx"
       },
       {
         "nombre": "Compras Seguras en Línea y Prevención de Fraudes",
-        "archivo": "modulo_6_contenido_4.jsx"
+        "archivo": "leccionGuiada.jsx"
       },
       {
         "nombre": "Gestión y Control de Finanzas Personales",
-        "archivo": "modulo_6_contenido_5.jsx"
+        "archivo": "leccionGuiada.jsx"
       },
       {
         "nombre": "Examen de Cobros Digitales",
-        "archivo": "modulo_6_contenido_6_Eval.jsx",
-        "evaluacion": true
+        "archivo": "evaluacionGuiada.jsx",
+        "evaluacion": true,
+        "puntajeMaximo": 100
       }
     ]
   },
@@ -396,6 +325,78 @@
         "archivo": "evaluacionGuiada.jsx",
         "evaluacion": true,
         "puntajeMaximo": 100
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "titulo": "Retos Educaplay",
+    "icono": "🎮",
+    "descripcion": "Actividades prácticas y cierre del curso",
+    "lecciones": [
+      {
+        "nombre": "Reto: Sopa de letras digital",
+        "archivo": "modulo_5_contenido_1.jsx"
+      },
+      {
+        "nombre": "Reto: Crucigrama de redes sociales",
+        "archivo": "modulo_5_contenido_2.jsx"
+      },
+      {
+        "nombre": "Reto final: Memorama tecnológico",
+        "archivo": "modulo_5_contenido_3.jsx"
+      },
+      {
+        "nombre": "Reto: Correo Electrónico Experto",
+        "archivo": "modulo_5_contenido_4.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - WhatsApp Business",
+        "archivo": "modulo_5_contenido_5.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Llamadas Telefónicas",
+        "archivo": "modulo_5_contenido_6.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - SMS/Smishing",
+        "archivo": "modulo_5_contenido_7.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Extorsión Telefónica",
+        "archivo": "modulo_5_contenido_8.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa - Premios Falsos",
+        "archivo": "modulo_5_contenido_9.jsx"
+      },
+      {
+        "nombre": "Reto: Crucigrama - Ciberseguridad",
+        "archivo": "modulo_5_contenido_10.jsx"
+      },
+      {
+        "nombre": "Reto final: Memorama Tecnológico 2",
+        "archivo": "modulo_5_contenido_11.jsx"
+      },
+      {
+        "nombre": "Reto: Sopa de letras - Seguridad Avanzada",
+        "archivo": "modulo_5_contenido_12.jsx"
+      },
+      {
+        "nombre": "Reto: Simulador Telefónico - Anti-Vishing",
+        "archivo": "modulo_5_contenido_13.jsx"
+      },
+      {
+        "nombre": "Reto: Blindaje de Cuenta - WhatsApp Seguro",
+        "archivo": "modulo_5_contenido_14.jsx"
+      },
+      {
+        "nombre": "Reto final: Reclutamiento Seguro - Anti-JobScams",
+        "archivo": "modulo_5_contenido_15.jsx"
+      },
+      {
+        "nombre": "Cierre de Retos Educaplay",
+        "archivo": "modulo_5_contenido_16.jsx"
       }
     ]
   }

@@ -5,7 +5,7 @@ import "../../Css/modulo_1_contenido_6.css";
 
 const MODULO_ID = 1;
 const NUM_CONTENIDO = 6;
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export default function ContenidoGmailBarraYPaginacion() {
   const [quizAnswered, setQuizAnswered] = useState(false);

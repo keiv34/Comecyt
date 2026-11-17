@@ -9,7 +9,7 @@ import axios from 'axios'
 import './index.css'
 
 // ✅ Configurar axios globalmente
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+const API_URL = import.meta.env.VITE_API_URL || ''
 axios.defaults.baseURL = API_URL
 
 // ✅ PARCHE GLOBAL: Mete el token a axios al cargar la app
@@ -35,6 +35,7 @@ axios.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    if (sessionStorage.getItem("agora-vista-previa") === "1") config.headers["X-Agora-Vista-Previa"] = "1"
     return config
   },
   (error) => {

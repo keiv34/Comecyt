@@ -26,7 +26,7 @@ export default function InicioDocente() {
     const fetchResumen = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/docente/dashboard-resumen"
+          "/api/docente/dashboard-resumen"
         );
         setResumen(data || null);
         setError("");

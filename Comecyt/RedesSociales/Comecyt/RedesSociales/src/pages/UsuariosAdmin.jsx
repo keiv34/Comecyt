@@ -46,7 +46,7 @@ export default function UsuariosAdmin() {
   const cargarAlumnos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/alumnos"
+        "/api/admin/alumnos"
       );
       setAlumnos(data);
       setError("");
@@ -90,7 +90,7 @@ export default function UsuariosAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/alumnos/${editing}`,
+        `/api/admin/alumnos/${editing}`,
         form
       );
 
@@ -120,7 +120,7 @@ export default function UsuariosAdmin() {
     if (!confirmDelete) return;
     try {
       await axios.delete(
-        `http://localhost:4000/api/admin/alumnos/${confirmDelete.alumno_id}`
+        `/api/admin/alumnos/${confirmDelete.alumno_id}`
       );
 
       setAlumnos((prev) =>
@@ -168,7 +168,7 @@ export default function UsuariosAdmin() {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/admin/alumnos", {
+      await axios.post("/api/admin/alumnos", {
         nombre: createForm.nombre,
         apellido: createForm.apellido,
         correo: createForm.correo,

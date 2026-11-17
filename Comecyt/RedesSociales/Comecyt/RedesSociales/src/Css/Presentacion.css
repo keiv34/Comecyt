@@ -128,3 +128,6 @@
     font-size: 2rem;
   }
 }
+@media (max-width: 700px) {
+  .presentacion .reveal:is(.left, .right):not(.show) { transform: translateY(12px); }
+}

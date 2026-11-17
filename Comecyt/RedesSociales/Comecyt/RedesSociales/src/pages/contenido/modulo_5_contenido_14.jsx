@@ -6,7 +6,7 @@ import { Trophy, XCircle } from "lucide-react";
 import confetti from "canvas-confetti";
 import '@/Css/modulo_5_contenido_14.css';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 5;
 const NUM_CONTENIDO = 14;
 const TIEMPO_JUEGO = 120;

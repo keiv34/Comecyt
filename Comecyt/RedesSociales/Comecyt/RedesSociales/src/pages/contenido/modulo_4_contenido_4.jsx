@@ -16,7 +16,7 @@ import igDmPaso1 from "../../assets/igDmPaso1.png";
 import igDmPaso2 from "../../assets/igDmPaso2.png";
 import igDmPaso3 from "../../assets/igDmPaso3.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 4;
 const TOTAL_PREGUNTAS = 6;

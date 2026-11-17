@@ -1,9 +1,9 @@
 import { pool } from "../config/database.js";
 import { modulosEvaluadosEnServidor, modulosVistaPrevia } from "../services/evaluacionesGuiadas.js";
 import bcrypt from "bcryptjs";
+import { MINIMO_EVALUACION_CLASICA } from "../services/acreditacion.js";
 
 // ===== CONSTANTES =====
-const MIN_PORCENTAJE_APROBADO = 70;
 
 // ✅ TOTALES REALES - IGUALES A Inicio.jsx
 
@@ -130,7 +130,7 @@ export const cambiarPasswordAlumno = async (req, res) => {
 // ===== CERTIFICADOS =====
 export const obtenerCertificadosAlumno = async (req, res) => {
   try {
-    const { correo } = req.body;
+    const { correo } = req.user;
     const [rows] = await pool.query(`
       SELECT c.certificado_id, m.titulo AS titulo_modulo, m.modulo_id, c.fecha_emision
       FROM CERTIFICADO c
@@ -165,7 +165,7 @@ export const obtenerIntentosEvaluacion = async (req, res) => {
       "SELECT puntaje, modulo_id FROM EVALUACION WHERE evaluacion_id = ? AND modulo_id NOT IN (?)", [evaluacion_id, modulosEvaluadosEnServidor]
     );
     if (!evaluacion) return res.status(404).json({ error: "Evaluación no encontrada" });
-    const aprobado = max_puntaje * 100 / evaluacion.puntaje >= MIN_PORCENTAJE_APROBADO;
+    const aprobado = max_puntaje * 100 / evaluacion.puntaje >= MINIMO_EVALUACION_CLASICA;
 
     res.json({ intentos, max_puntaje, aprobado });
   } catch (err) {
@@ -193,8 +193,8 @@ export const guardarResultadoEvaluacion = async (req, res) => {
     if (!Number.isInteger(puntaje) || puntaje < 0 || puntaje > evaluacion.puntaje) {
       return res.status(400).json({ error: "Puntaje fuera de rango" });
     }
-    const aprobado = puntaje * 100 / evaluacion.puntaje >= MIN_PORCENTAJE_APROBADO;
-    if (modulosVistaPrevia(req.user).includes(evaluacion.modulo_id)) {
+    const aprobado = puntaje * 100 / evaluacion.puntaje >= MINIMO_EVALUACION_CLASICA;
+    if (modulosVistaPrevia(req).includes(evaluacion.modulo_id)) {
       return res.json({ mensaje: "Resultado de vista previa", intentos: 1, max_puntaje: puntaje, aprobado });
     }
 
@@ -240,7 +240,7 @@ export const reiniciarEvaluacionModulo = async (req, res) => {
       "SELECT evaluacion_id, modulo_id FROM EVALUACION WHERE evaluacion_id = ? AND modulo_id NOT IN (?)", [evaluacion_id, modulosEvaluadosEnServidor]
     );
     if (!evaluacion) return res.status(404).json({ error: "Evaluación no encontrada" });
-    if (modulosVistaPrevia(req.user).includes(evaluacion.modulo_id)) {
+    if (modulosVistaPrevia(req).includes(evaluacion.modulo_id)) {
       return res.json({ message: "Vista previa reiniciada" });
     }
     await pool.query("DELETE FROM RESULTADO WHERE alumno_id =? AND evaluacion_id =?", [alumno[0].alumno_id, evaluacion_id]);

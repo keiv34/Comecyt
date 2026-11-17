@@ -7,7 +7,7 @@ import confetti from "canvas-confetti";
 import { useCourseProgress } from "@/hooks/useGuardarProgreso";
 import "@/Css/modulo_5_contenido_1.css"; // Reutiliza el mismo CSS
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 5; // ✅ Es módulo 5
 const NUM_CONTENIDO = 1; // ✅ Contenido 1 de módulo 5
 const TIEMPO_JUEGO = 120; // 2:00 MINUTOS

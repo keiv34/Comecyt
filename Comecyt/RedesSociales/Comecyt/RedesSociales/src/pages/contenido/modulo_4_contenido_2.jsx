@@ -15,7 +15,7 @@ import igFotoPerfilImg from "../../assets/igFotoPerfil.png";
 import igEnlacesContactoImg from "../../assets/igEnlacesContacto.png";
 import igPrivacidadImg from "../../assets/igPrivacidad.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 4; // ✅ Es módulo 4
 const NUM_CONTENIDO = 2;
 const TOTAL_PREGUNTAS = 6;

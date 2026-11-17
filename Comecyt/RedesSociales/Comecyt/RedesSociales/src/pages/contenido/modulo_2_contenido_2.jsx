@@ -16,7 +16,7 @@ import paso6FbImg from "../../assets/Paso6_fb.png";
 import paso7FbImg from "../../assets/Paso7_fb.png";
 import paso8FbImg from "../../assets/Paso8_fb.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 2;
 const NUM_CONTENIDO = 2;
 

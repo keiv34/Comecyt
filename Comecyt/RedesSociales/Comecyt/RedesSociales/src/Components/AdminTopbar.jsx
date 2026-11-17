@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../Css/AdminTopbar.css";
 
 function AdminTopbar({ nombre }) {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const irPerfil = () => {
-    window.location.href = "/admin/adminPerfil";
-  };
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="admin-topbar">
@@ -15,23 +16,22 @@ function AdminTopbar({ nombre }) {
       <div className="user-info">
         <span>{nombre}</span>
 
-        <div
-          className="profile"
-          onClick={() => setMenuVisible(!menuVisible)}
-        >
-          <img
+        <div className="profile">
+          <button type="button" className="admin-topbar__perfil" aria-label="Opciones de perfil" aria-expanded={menuVisible} onClick={() => setMenuVisible(!menuVisible)}>
+            <img
             src="https://cdn-icons-png.flaticon.com/512/9385/9385289.png"
-            alt="Admin"
+            alt=""
             className="user-icon"
-          />
+            />
+          </button>
 
           {menuVisible && (
             <div className="dropdown-menu">
-              <button onClick={irPerfil}>Mi Perfil</button>
+              <Link to="/admin/adminPerfil" onClick={() => setMenuVisible(false)}>Mi perfil</Link>
               <button
                 onClick={() => {
-                  localStorage.clear();
-                  window.location.href = "/";
+                  logout();
+                  navigate("/login", { replace: true });
                 }}
               >
                 Cerrar sesión

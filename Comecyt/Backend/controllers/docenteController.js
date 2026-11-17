@@ -259,7 +259,7 @@ export const listarCalificaciones = async (req, res) => {
 // -------- CERTIFICADOS --------
 
 // GET /api/docente/certificados
-export const listarCertificados = async (req, res) => {
+export const listarCertificados = async (_req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT
@@ -275,16 +275,13 @@ export const listarCertificados = async (req, res) => {
        ORDER BY c.fecha_emision DESC`
     );
 
-    // Construimos la URL base en función del host actual
-    const baseUrl = `${req.protocol}://${req.get("host")}/certificados`;
-
     const mapped = rows.map((r) => {
       let ruta_archivo = null;
 
       if (r.ruta_certificado) {
         const partes = r.ruta_certificado.split(/[/\\]/); // separa / y \
         const fileName = partes[partes.length - 1];
-        ruta_archivo = `${baseUrl}/${fileName}`;
+        ruta_archivo = `/certificados/${encodeURIComponent(fileName)}`;
       }
 
       return {

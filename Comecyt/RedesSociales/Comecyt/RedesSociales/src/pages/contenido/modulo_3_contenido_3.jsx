@@ -16,7 +16,7 @@ import whatsappLlamadasImg from "../../assets/whatsappLlamadas.png";
 import whatsappGruposImg from "../../assets/whatsappGrupos.png";
 import whatsappEstadosImg from "../../assets/whatsappEstados.png";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const MODULO_ID = 3; // ✅ Es módulo 3
 const NUM_CONTENIDO = 3;
 const TOTAL_PREGUNTAS = 6;

@@ -32,7 +32,7 @@ export default function UsuariosDocente() {
   const cargarAlumnos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/docente/usuarios"
+        "/api/docente/usuarios"
       );
       setAlumnos(data);
       setError("");
@@ -72,7 +72,7 @@ export default function UsuariosDocente() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/docente/usuarios/${editing}`,
+        `/api/docente/usuarios/${editing}`,
         form
       );
 

@@ -11,6 +11,11 @@ export const leccionesNuevas = {
         [
           "Sube, mueve y encuentra archivos",
           "Puedes subir archivos o crear Documentos de Google en una carpeta. Usa la búsqueda por nombre o tipo y crea accesos directos cuando necesites localizar el mismo archivo desde otra carpeta. Revisa los permisos de la carpeta de destino antes de mover un documento privado."
+        ],
+        [
+          "Distingue entre borradores y entregas",
+          "Organiza una carpeta del proyecto con espacios para fuentes, borradores y entregas. Usa nombres como Informe de ventas — 2026-03 y activa un acceso directo en la carpeta de entregas si el equipo necesita consultar el archivo principal.",
+          "Propón una estructura para organizar tres pedidos, dos cotizaciones y un informe. Explica dónde encontraría cada material una persona nueva."
         ]
       ],
       "recursos": [
@@ -41,6 +46,11 @@ export const leccionesNuevas = {
         [
           "Coordina los cambios",
           "Usa comentarios para preguntar o señalar un punto. Si necesitas proponer cambios sin incorporarlos todavía, usa sugerencias cuando estén disponibles. El historial de versiones ayuda a revisar cambios y recuperar una versión anterior."
+        ],
+        [
+          "Resuelve una corrección sin perder el trabajo del equipo",
+          "Dos compañeros revisan un presupuesto. Una persona sugiere ajustar el total y la otra deja una pregunta en un comentario. Antes de aceptar el cambio, revisen el cálculo y pongan un nombre a la versión aprobada para poder encontrarla en el historial.",
+          "Con un documento de prueba, simula el cambio de una cantidad, explica el motivo en un comentario y revisa quién tiene acceso al archivo."
         ]
       ],
       "recursos": [
@@ -75,6 +85,11 @@ export const leccionesNuevas = {
         [
           "Presenta y toma acuerdos",
           "Comparte solo la pestaña o ventana relevante para evitar mostrar notificaciones u otros documentos. Da acceso por separado al archivo que el equipo necesita editar y registra los acuerdos al terminar."
+        ],
+        [
+          "Convierte una reunión en acuerdos verificables",
+          "Para organizar una feria, comparte la agenda antes de la reunión. Al cerrar, registra cada acuerdo con la persona responsable y la fecha. Por ejemplo, Elena confirmará dos mesas el jueves y marcará la tarea en el documento compartido.",
+          "Escribe tres acuerdos de una reunión de diez minutos. Añade quién hará cada tarea y cómo comprobará el equipo su cumplimiento."
         ]
       ],
       "recursos": [
@@ -107,6 +122,11 @@ export const leccionesNuevas = {
         [
           "Describe lo que hiciste",
           "Resume en Acerca de qué sabes hacer y qué oportunidades buscas. En Experiencia o Proyectos, menciona tu responsabilidad y un resultado comprobable. Añade formación y aptitudes pertinentes sin publicar documentos de identidad ni tu domicilio."
+        ],
+        [
+          "Describe resultados con un ejemplo",
+          "En el perfil, convierte «Apoyé en ventas» en «Organicé un registro de pedidos con una hoja de cálculo para que dos compañeros pudieran consultar el estado de cada entrega». Usa cifras y ejemplos que puedas explicar en una entrevista.",
+          "Elige una tarea escolar o laboral. Describe qué hiciste, con qué herramienta y cuál fue el resultado observable."
         ]
       ],
       "recursos": [
@@ -137,6 +157,11 @@ export const leccionesNuevas = {
         [
           "Escribe un mensaje breve",
           "Explica cómo conoces a la persona o qué tema comparten. Pide algo concreto y fácil de responder. Evita enviar solicitudes repetidas o publicar datos de otras personas sin autorización."
+        ],
+        [
+          "Continúa una conversación profesional",
+          "Después de un taller, envía una invitación breve que mencione el tema que compartieron. Si la persona acepta, puedes hacer una pregunta concreta sobre ese tema y agradecer su tiempo.",
+          "Redacta una invitación para alguien que habló sobre comercio digital en un taller ficticio. Prepara una pregunta que puedas hacer después de conectar."
         ]
       ],
       "recursos": [
@@ -167,6 +192,11 @@ export const leccionesNuevas = {
         [
           "Verifica al empleador",
           "Compara la vacante con la página oficial de la empresa. Ajusta tu CV a los requisitos que sí cumples. Desconfía de quien exige dinero para contratarte o solicita datos bancarios por chat."
+        ],
+        [
+          "Compara una oferta con tu experiencia",
+          "Una vacante solicita manejar hojas de cálculo, atención a clientes y disponibilidad por las tardes. Anota qué puedes demostrar con ejemplos y qué condiciones necesitas confirmar antes de enviar tus datos.",
+          "Prepara una tabla con tres requisitos, una evidencia por requisito y una pregunta que harías a la empresa. Verifica la vacante por un canal oficial de la organización."
         ]
       ],
       "recursos": [
@@ -203,6 +233,11 @@ export const leccionesNuevas = {
         [
           "Antes de subir",
           "Compara placa, modelo y persona conductora con los datos de tu solicitud. Si algo no coincide, no abordes y usa las opciones de ayuda de la app. Si Uber te muestra un PIN de viaje, úsalo solo para verificar ese viaje después de comprobar los datos del auto."
+        ],
+        [
+          "Compara opciones antes de confirmar un viaje",
+          "Para llegar a una cita, compara el punto de encuentro, el tiempo estimado y el precio de las opciones que muestra la aplicación. Si la ubicación queda al otro lado de una avenida, ajusta el punto de recogida antes de pedir el viaje.",
+          "Simula dos opciones. Una tarda 5 minutos y cuesta $95. La otra tarda 12 minutos y cuesta $80. Elige según la hora de tu cita y describe dónde esperarías."
         ]
       ],
       "recursos": [
@@ -237,6 +272,11 @@ export const leccionesNuevas = {
         [
           "Si surge un problema",
           "Consulta las opciones de seguridad de la app y busca ayuda inmediata si hay peligro. Para un cobro inesperado o un incidente, abre el viaje correspondiente, conserva el recibo y reporta desde el historial."
+        ],
+        [
+          "Prepara un reporte de viaje con datos concretos",
+          "Si ves un cargo inesperado, abre el historial, localiza el viaje y anota el importe mostrado al pedir el servicio y el que figura en el recibo. Describe la diferencia y usa el canal de ayuda asociado al viaje.",
+          "Redacta un reporte ficticio con fecha, importe esperado, importe cobrado y una petición concreta. Usa datos de ejemplo sin información personal."
         ]
       ],
       "recursos": [
@@ -267,6 +307,11 @@ export const leccionesNuevas = {
         [
           "Al recibir y reportar",
           "Sigue el estado del pedido desde la aplicación. Si llega incompleto, equivocado o aparece como entregado sin que lo hayas recibido, abre ese pedido y usa la opción de ayuda. Conserva el comprobante y, cuando sea útil, una foto del problema. No entregues contraseñas, códigos bancarios ni pagos adicionales por enlaces externos."
+        ],
+        [
+          "Confirma qué incluye un pedido y qué recibiste",
+          "Una tienda ofrece dos productos por $160, con $30 de envío y $10 de servicio. Antes de confirmar, revisa la dirección, el tiempo estimado y el total de $200. Si falta un producto, conserva el resumen y señala cuál quedó pendiente.",
+          "Prepara una lista para revisar un pedido de dos artículos al recibirlo. Escribe el mensaje que enviarías si faltara uno."
         ]
       ],
       "recursos": [
@@ -299,6 +344,11 @@ export const leccionesNuevas = {
         [
           "Conserva el control del resultado",
           "Lee la respuesta y comprueba que atiende tu objetivo. Corrige omisiones con un mensaje adicional y edita el resultado antes de usarlo o enviarlo."
+        ],
+        [
+          "Define lo que esperas de un borrador",
+          "Para redactar un aviso, indica a quién va dirigido, cuál es su objetivo y qué información debe incluir. Puedes pedir tres líneas con un tono cordial y dejar entre corchetes los datos que aún no tienes confirmados.",
+          "Pide un aviso para una feria ficticia. Comprueba que el texto presenta la actividad, incluye un espacio para la fecha y termina con una indicación para el público."
         ]
       ],
       "recursos": [
@@ -329,6 +379,11 @@ export const leccionesNuevas = {
         [
           "Refina y compara",
           "Pide una versión más breve, una tabla o un ejemplo diferente. Prueba la misma instrucción en ambos asistentes y compara qué datos conservaron, qué omitieron y qué supusieron. Pídeles que señalen la información faltante en vez de completarla con inventos."
+        ],
+        [
+          "Mejora una instrucción de manera gradual",
+          "Si obtienes un resultado demasiado largo, conserva el objetivo y añade una extensión concreta. Si el lenguaje es difícil de seguir, conserva la estructura y pide palabras pensadas para una persona que empieza. Cambiar un requisito cada vez ayuda a observar su efecto.",
+          "Compara dos borradores de una invitación con el mismo objetivo. Cambia solo la extensión que pides y señala qué información se conservó en ambas respuestas."
         ]
       ],
       "recursos": [
@@ -359,6 +414,11 @@ export const leccionesNuevas = {
         [
           "Reduce los datos que compartes",
           "Retira nombres, contraseñas, datos bancarios y documentos internos de tus ejemplos. Usa datos ficticios para practicar. Antes de subir archivos, revisa las reglas de tu organización y los controles de datos de tu cuenta."
+        ],
+        [
+          "Investiga una afirmación antes de publicar",
+          "Si un borrador incluye una cifra o atribuye una regla a una institución, localiza el documento original y revisa su fecha y alcance. Corrige la frase con lo que puedas comprobar y cita el documento cuando lo compartas.",
+          "Elige una afirmación de un borrador de práctica. Anota cómo la verificarías y reescríbela con los datos confirmados y una referencia."
         ]
       ],
       "recursos": [

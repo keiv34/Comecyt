@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Camera, Download, FileText, GraduationCap, LogOut, Pencil } from "lucide-react";
+import { BookOpen, Camera, FileText, GraduationCap, LogOut, Pencil } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { PREFIJO_AVATAR } from "../context/limpiarSesion";
 import AvatarAlumno from "../Components/common/AvatarAlumno";
+import DescargarConstancia from "../Components/common/DescargarConstancia";
 import { MODULOS, TOTAL_CONTENIDOS } from "../curso/catalogo";
 import "../Css/PanelAlumno.css";
 
@@ -27,7 +28,6 @@ export default function PerfilAlumno() {
   const [error, setError] = useState(false);
   const [editando, setEditando] = useState(false);
   const [ocupado, setOcupado] = useState(false);
-  const [generando, setGenerando] = useState(false);
   const [mensaje, setMensaje] = useState(null);
   const clave = PREFIJO_AVATAR + user?.correo;
   const [avatar, setAvatar] = useState(() => leerAvatar(clave));
@@ -94,31 +94,14 @@ export default function PerfilAlumno() {
     }
   }
 
-  async function descargarCertificado() {
-    setGenerando(true);
-    setMensaje(null);
-    try {
-      const { data } = await api.post("/api/certificados/generar", {
-        alumno_id: datos.alumno_id, nombre: datos.nombre, apellido: datos.apellido, correo: datos.correo
-      }, { responseType: "blob" });
-      const url = URL.createObjectURL(data);
-      const enlace = document.createElement("a");
-      enlace.href = url;
-      enlace.download = "Certificado_AGORA.pdf";
-      enlace.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch {
-      setMensaje({ error: true, texto: "No pudimos descargar el certificado." });
-    } finally {
-      setGenerando(false);
-    }
-  }
-
   if (!datos) return <div className="panel-alumno"><p role={error ? "alert" : "status"}>{error ? "No pudimos cargar tu perfil." : "Cargando tu perfil…"}</p></div>;
   const nombre = [datos.nombre, datos.apellido].filter(Boolean).join(" ");
   const avances = new Map((progreso || []).map(item => [item.modulo_id, item.progreso_actual]));
   const completados = MODULOS.filter(item => (avances.get(item.id) ?? 0) >= item.fin).length;
   const vistos = MODULOS.reduce((total, item) => total + Math.min(item.fin, avances.get(item.id) ?? 0), 0);
+  const emitidas = new Map((certificados || []).map(certificado => [certificado.modulo_id, certificado]));
+  const disponibles = new Set((progreso || []).filter(modulo => modulo.constancia_disponible).map(modulo => modulo.modulo_id));
+  const constancias = MODULOS.filter(modulo => disponibles.has(modulo.id) || emitidas.has(modulo.id));
 
   return (
     <div className="panel-alumno">
@@ -166,14 +149,14 @@ export default function PerfilAlumno() {
           : <p role="status">{progreso === false ? "No pudimos consultar tu avance." : "Cargando avance…"}</p>}
       </section>
       <section className="panel-alumno__tarjeta" aria-labelledby="certificados-perfil">
-        <h2 id="certificados-perfil" className="panel-alumno__fila"><GraduationCap size={21} aria-hidden="true" /> Certificados</h2>
-        {progreso && vistos === TOTAL_CONTENIDOS
-          ? <button className="panel-alumno__boton" onClick={descargarCertificado} disabled={generando}><Download size={17} aria-hidden="true" /> {generando ? "Generando…" : "Descargar certificado"}</button>
-          : progreso && <p>Completa los {TOTAL_CONTENIDOS - vistos} contenidos restantes para obtener tu certificado.</p>}
-        {certificados === false && <p role="status">No pudimos consultar tus certificados.</p>}
-        {certificados?.length > 0 && <ul className="panel-alumno__certificados">{certificados.map(certificado => (
-          <li key={certificado.certificado_id}><span className="panel-alumno__fila"><FileText size={17} aria-hidden="true" /> {certificado.titulo_modulo}</span>
-            {certificado.fecha_emision && <span>{new Date(certificado.fecha_emision).toLocaleDateString("es-MX")}</span>}</li>
+        <h2 id="certificados-perfil" className="panel-alumno__fila"><GraduationCap size={21} aria-hidden="true" /> Constancias por módulo</h2>
+        {certificados === false && <p role="status">No pudimos consultar tus constancias emitidas.</p>}
+        {progreso && constancias.length === 0 && <p>Completa un módulo y aprueba su evaluación, si la tiene, para obtener tu constancia.</p>}
+        {constancias.length > 0 && <ul className="panel-alumno__certificados">{constancias.map(modulo => (
+          <li key={modulo.id}>
+            <span className="panel-alumno__fila"><FileText size={17} aria-hidden="true" /> {modulo.titulo}</span>
+            <DescargarConstancia moduloId={modulo.id} />
+          </li>
         ))}</ul>}
       </section>
     </div>

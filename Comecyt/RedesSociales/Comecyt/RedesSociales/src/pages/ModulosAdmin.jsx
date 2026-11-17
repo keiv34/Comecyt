@@ -31,7 +31,7 @@ export default function ModulosAdmin() {
   const cargarModulos = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/admin/modulos"
+        "/api/admin/modulos"
       );
       setModulos(data || []);
       setError("");
@@ -71,7 +71,7 @@ export default function ModulosAdmin() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/modulos/${editing}`,
+        `/api/admin/modulos/${editing}`,
         form
       );
 
@@ -121,7 +121,7 @@ export default function ModulosAdmin() {
               <article className="mod-card" key={m.modulo_id}>
                 <header className="mod-card-header">
                   <div>
-                    <span className="mod-chip">Módulo {m.modulo_id}</span>
+                    <span className="mod-chip">ID {m.modulo_id}</span>
                     <h2>{m.titulo}</h2>
                   </div>
                   <button

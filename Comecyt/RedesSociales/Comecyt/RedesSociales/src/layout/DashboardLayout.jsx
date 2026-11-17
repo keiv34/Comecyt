@@ -6,7 +6,7 @@ import { House, FileText, BookOpen, UserRound, ChartNoAxesColumn, Users, Present
 import { useAuth } from "../context/AuthContext";
 import "../Css/DashboardLayout.css";
 
-const API_URL = 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 function DashboardLayout() {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ function DashboardLayout() {
             {/* ✅ MENÚ PARA DOCENTES */}
             {rol === 'docente' && (
               <>
-                <Link to="/docente/dashboard" className="nav-item">
+                <Link to="/docente/inicio" className="nav-item">
                   <ChartNoAxesColumn size={18} aria-hidden="true" /> Dashboard
                 </Link>
                 <Link to="/docente/alumnos" className="nav-item">
@@ -105,10 +105,10 @@ function DashboardLayout() {
             {/* ✅ MENÚ PARA ADMIN */}
             {rol === 'admin' && (
               <>
-                <Link to="/admin/dashboard" className="nav-item">
+                <Link to="/admin/inicio" className="nav-item">
                   <ChartNoAxesColumn size={18} aria-hidden="true" /> Dashboard
                 </Link>
-                <Link to="/admin/alumnos" className="nav-item">
+                <Link to="/admin/usuarios" className="nav-item">
                   <Users size={18} aria-hidden="true" /> Alumnos
                 </Link>
                 <Link to="/admin/docentes" className="nav-item">

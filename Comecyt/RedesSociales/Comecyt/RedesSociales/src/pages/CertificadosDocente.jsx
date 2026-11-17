@@ -27,7 +27,7 @@ export default function CertificadosDocente() {
     const fetchCerts = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/docente/certificados"
+          "/api/docente/certificados"
         );
         setLista(data || []);
         setError("");
@@ -161,7 +161,7 @@ export default function CertificadosDocente() {
 
             <div className="cert-modal-body">
               <iframe
-                src={selectedCert.ruta_archivo}
+                src={`${import.meta.env.VITE_API_URL || ""}${selectedCert.ruta_archivo}`}
                 title={`Certificado ${selectedCert.certificado_id}`}
                 className="cert-modal-frame"
               />

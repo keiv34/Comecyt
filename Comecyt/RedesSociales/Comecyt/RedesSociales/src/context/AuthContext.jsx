@@ -2,12 +2,13 @@ import { limpiarSesion } from "./limpiarSesion";
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 const api = axios.create({ baseURL: API_URL });
 
 api.interceptors.request.use(config => {
     const token = localStorage.getItem("token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (sessionStorage.getItem("agora-vista-previa") === "1") config.headers["X-Agora-Vista-Previa"] = "1";
     return config;
 });
 
